@@ -1,6 +1,6 @@
 //dependencies
 require("dotenv").config();
-// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 const express = require("express");
 const cors = require("cors");
 const dayjs = require("dayjs");
@@ -26,7 +26,8 @@ const whitelist = [process.env.URL];
 const corsOptions = {
   optionsSuccessStatus: 200,
   Credential: true,
-  origin: whitelist,
+  // origin: whitelist,
+  origin: "*",
 };
 // const corsOptions = {
 //   optionsSuccessStatus: 200,
