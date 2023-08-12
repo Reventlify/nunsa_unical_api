@@ -40,7 +40,7 @@ exports.sendVerificationCode = async (req, res) => {
 
     //sends verification code to clients mail
     const msg = {
-      from: "Reventlify <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UNICAL <reventlifyhub@outlook.com>", // sender address
       to: email, // list of receivers
       subject: "Email Verification", // Subject line
       text: `here is your verification code: ${emailVCode}`, // plain text body
