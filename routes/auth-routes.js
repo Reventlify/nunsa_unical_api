@@ -8,4 +8,7 @@ const { Router } = require("express");
 // send code for email verification
 router.post("/sendcode", auth.sendCode);
 
+// send code for email verification
+router.post("/verifyemail", auth.verifyEmail);
+
 module.exports = router;

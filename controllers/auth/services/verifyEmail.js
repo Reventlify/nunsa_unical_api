@@ -84,3 +84,32 @@ exports.sendVerificationCode = async (req, res) => {
     res.status(418).json(error.message);
   }
 };
+
+exports.verifyCode = async (req, res) => {
+  const { verificationCode, email } = req.body;
+  try {
+    // gets the real verification code
+    const code = await pool.query(
+      "SELECT * FROM studentslimbo WHERE student_email = $1",
+      [email]
+    );
+
+    // checks if the code entered exists
+    if (code.rows.length < 1)
+      return res.status(400).json("Incorrect Code.");
+
+    // checks if the code entered is valid
+    if (code.rows[0].client_verify !== verificationCode)
+      return res.status(400).json("Incorrect Code.");
+
+    // sets the client in limbo to verified final registeration
+    await pool.query(
+      "UPDATE limbo SET client_status = $1 WHERE client_email = $2",
+      ["VERIFIED", email]
+    );
+
+    return res.status(200).json({ message: "Email Verified!" });
+  } catch (error) {
+    return res.status(500).json({ err: error.message });
+  }
+};
