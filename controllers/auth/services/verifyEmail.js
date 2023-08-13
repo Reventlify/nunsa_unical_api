@@ -94,9 +94,9 @@ exports.verifyCode = async (req, res) => {
       [email]
     );
 
-    // checks if the code entered exists
-    if (code.rows.length < 1)
-      return res.status(400).json("Incorrect Code.");
+    // // checks if the code entered exists
+    // if (code.rows.length < 1)
+    //   return res.status(400).json("Incorrect Code.");
 
     // checks if the code entered is valid
     if (code.rows[0].client_verify !== verificationCode)
