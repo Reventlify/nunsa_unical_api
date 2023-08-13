@@ -2,9 +2,11 @@ const pool = require("../../../db");
 const dayjs = require("dayjs");
 const nodemailer = require("nodemailer");
 const randomString = require("random-string");
+const trim = require("lodash.trim");
+const { neat } = require("../../../utilities/capNsmalz");
 
 exports.sendVerificationCode = async (req, res) => {
-  const { email } = req.body;
+  const { email, fName } = req.body;
   // verification code
   const emailVCode = randomString({ length: 5 });
   try {
@@ -38,18 +40,41 @@ exports.sendVerificationCode = async (req, res) => {
       },
     });
 
+    await new Promise((resolve, reject) => {
+      // verify connection configuration transport.verify(function (error, success) {
+      transport.verify(function (error, success) {
+        if (error) {
+          console.log(error);
+          reject(error);
+        } else {
+          console.log("Server is ready to take our messages");
+          resolve(success);
+        }
+      });
+    });
+
     //sends verification code to clients mail
     const msg = {
       from: "NUNSA UNICAL <reventlifyhub@outlook.com>", // sender address
       to: email, // list of receivers
       subject: "Email Verification", // Subject line
-      text: `here is your verification code: ${emailVCode}`, // plain text body
+      text: `${neat(trim(fName))} here is your verification code: ${emailVCode}`, // plain text body
       //   html: `<h3>Email Verification</h3>
       //     <p>here is your verification code: <strong>${emailVCode}</strong></p>`, //HTML message
     };
 
     // send mail with defined transport object
-    await transport.sendMail(msg);
+    // await transport.sendMail(msg);
+    await new Promise((resolve, reject) => {
+        transport.sendMail(msg, (err, info) => {
+          if (err) {
+            console.error(err);
+            reject(err);
+          } else {
+            resolve(info);
+          }
+        });
+      });
     return res.status(200).json({
       Status: "Sent Successfully!",
       toEmail: email,
