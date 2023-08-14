@@ -58,7 +58,9 @@ exports.sendVerificationCode = async (req, res) => {
       from: "NUNSA UNICAL <reventlifyhub@outlook.com>", // sender address
       to: email, // list of receivers
       subject: "Email Verification", // Subject line
-      text: `${neat(trim(fName))} here is your verification code: ${emailVCode}`, // plain text body
+      text: `${neat(
+        trim(fName)
+      )} here is your verification code: ${emailVCode}`, // plain text body
       //   html: `<h3>Email Verification</h3>
       //     <p>here is your verification code: <strong>${emailVCode}</strong></p>`, //HTML message
     };
@@ -66,15 +68,15 @@ exports.sendVerificationCode = async (req, res) => {
     // send mail with defined transport object
     // await transport.sendMail(msg);
     await new Promise((resolve, reject) => {
-        transport.sendMail(msg, (err, info) => {
-          if (err) {
-            console.error(err);
-            reject(err);
-          } else {
-            resolve(info);
-          }
-        });
+      transport.sendMail(msg, (err, info) => {
+        if (err) {
+          console.error(err);
+          reject(err);
+        } else {
+          resolve(info);
+        }
       });
+    });
     return res.status(200).json({
       Status: "Sent Successfully!",
       toEmail: email,
@@ -94,17 +96,17 @@ exports.verifyCode = async (req, res) => {
       [email]
     );
 
-    // // checks if the code entered exists
-    // if (code.rows.length < 1)
-    //   return res.status(400).json("Incorrect Code.");
+    // checks if the code entered exists
+    if (code.rows.length === 0)
+      return res.status(400).json("You don't have a verification code");
 
     // checks if the code entered is valid
-    if (code.rows[0].client_verify !== verificationCode)
+    if (code.rows[0].code !== verificationCode)
       return res.status(400).json("Incorrect Code.");
 
     // sets the client in limbo to verified final registeration
     await pool.query(
-      "UPDATE limbo SET client_status = $1 WHERE client_email = $2",
+      "UPDATE studentslimbo SET client_status = $1 WHERE student_email = $2",
       ["VERIFIED", email]
     );
 
