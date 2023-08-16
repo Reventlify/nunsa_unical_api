@@ -1,6 +1,30 @@
 const pool = require("../db");
 const randomString = require("random-string");
 
+// generates sessions
+exports.sessionID = async () => {
+  // generates sessions ID string
+  let id = randomString({
+    length: 8,
+    numeric: true,
+    letters: false,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM sch_sessions WHERE sch_session_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return sessionID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
 // generates clients IDs
 exports.clientID = async () => {
   // generates clients ID
