@@ -36,7 +36,7 @@ exports.clientID = async () => {
   });
   try {
     const checker = await pool.query(
-      "SELECT * FROM clients WHERE client_id = $1",
+      "SELECT * FROM students WHERE student_id = $1",
       [id]
     );
 

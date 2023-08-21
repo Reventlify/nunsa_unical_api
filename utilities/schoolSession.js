@@ -51,36 +51,40 @@ const inputGroomer = (victim) => {
 
 // handles session creation
 exports.sessionExistence = async (input) => {
-  const sessionGotten = inputGroomer(input);
-  try {
-    if (sessionGotten === syntaxErrorMsg) {
-      return {
-        success: false,
-      };
-    } else {
-      const sch_session = await pool.query(
-        `SELECT * FROM sch_sessions WHERE sch_session = $1`,
-        [sessionGotten]
+  const sessionGotten = inputGroomer(input.slice(0, 2));
+  // try {
+  if (sessionGotten === syntaxErrorMsg) {
+    return {
+      success: false,
+      session_id: "",
+      existedPrev: false,
+    };
+  } else {
+    const sch_session = await pool.query(
+      `SELECT * FROM sch_sessions WHERE sch_session = $1`,
+      [sessionGotten]
+    );
+    if (sch_session.rows.length === 0) {
+      const createSession = await pool.query(
+        `INSERT INTO sch_sessions(sch_session_id, sch_session, createdat) VALUES($1, $2, $3) RETURNING *`,
+        [await sessionID(), sessionGotten, dayjs().format()]
       );
-      if (sch_session.rows.length === 0) {
-        const createSession = await pool.query(
-          `INSERT INTO sch_sessions(sch_session_id, sch_session, createdat) VALUES($1, $2, $3) RETURBING *`,
-          [sessionID(), sessionGotten, dayjs().format()]
-        );
 
-        return {
-          success: true,
-          session_id: createSession.rows[0].sch_session_id,
-          existedPrev: false,
-        };
-      }
+      console.log(createSession.rows[0].sch_session_id);
       return {
         success: true,
-        session_id: sch_session.rows[0].sch_session_id,
-        existedPrev: true,
+        session_id: createSession.rows[0].sch_session_id,
+        existedPrev: false,
       };
     }
-  } catch (error) {
-    return console.log(error);
+    console.log(sch_session.rows[0].sch_session_id);
+    return {
+      success: true,
+      session_id: sch_session.rows[0].sch_session_id,
+      existedPrev: true,
+    };
   }
+  // } catch (error) {
+  //   return console.log(error);
+  // }
 };

@@ -11,4 +11,7 @@ router.post("/sendcode", auth.sendCode);
 // send code for email verification
 router.post("/verifyemail", auth.verifyEmail);
 
+// send code for email verification
+router.post("/register", auth.register);
+
 module.exports = router;

@@ -4,18 +4,18 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const capNsmalz = require("../../../utilities/capNsmalz");
 const idGenerator = require("../../../utilities/IDGenerator");
+const { sessionExistence } = require("../../../utilities/schoolSession");
 
 exports.register = async (req, res) => {
-  const { email, password, fName, mName, lName, matNo, gender } =
-    req.body;
+  const { email, password, fName, mName, lName, matNo, gender } = req.body;
   try {
     const user = await pool.query(
-      "SELECT * FROM clients WHERE client_email = $1",
+      "SELECT * FROM students WHERE student_email = $1",
       [email]
     );
 
     const userInLimbo = await pool.query(
-      "SELECT * studentslimbo WHERE student_email = $1",
+      "SELECT * FROM studentslimbo WHERE student_email = $1",
       [email]
     );
 
@@ -34,13 +34,13 @@ exports.register = async (req, res) => {
     const newClient = await pool.query(
       `
       INSERT INTO students(
-        student_id, sch_session_id, student_email, student_mat_no, 
+        sch_session_id, student_id, student_email, student_mat_no, 
         student_fname, student_mname, student_lname, student_role,
         student_password, student_gender, createdat
         ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
       [
+        (await sessionExistence(matNo)).session_id,
         await idGenerator.clientID(),
-        await idGenerator.sessionID(matNo.slice(0, 2)),
         email,
         matNo,
         fName.toLowerCase(),
@@ -69,25 +69,25 @@ exports.register = async (req, res) => {
       to: "edijay17@gmail.com", // list of receivers
       subject: "Newly Registered Client", // Subject line
       text: `Congrats ${capNsmalz.neat(
-        newClient.rows[0].client_name
+        newClient.rows[0].student_fname
       )} just successfully registered with Reventlify.`, // plain text body
       html: `<h1>Newly Registered Client</h1>
       <p>Congrats ${capNsmalz.neat(
-        newClient.rows[0].client_name
+        newClient.rows[0].student_fname
       )} just successfully registered with <strong>Reventlify</strong></p>`, //HTML message
     };
 
     //Welcome Message
     const msg1 = {
       from: "Reventlify <reventlifyhub@outlook.com>", // sender address
-      to: newClient.rows[0].client_email, // list of receivers
+      to: newClient.rows[0].student_email, // list of receivers
       subject: "Welcome To Reventlify", // Subject line
       text: `${capNsmalz.neat(
-        newClient.rows[0].client_name
+        newClient.rows[0].student_fname
       )} thank you for choosing Reventlify.`, // plain text body
       html: `<h2>Welcome To Reventlify</h2>
         <p>${capNsmalz.neat(
-          newClient.rows[0].client_name
+          newClient.rows[0].student_fname
         )} thank you for choosing <strong>Reventlify</strong>.</p>`, //HTML message
     };
 
@@ -101,6 +101,7 @@ exports.register = async (req, res) => {
     // return
     return res.status(200).json({ Registration: "Successful!" });
   } catch (error) {
+    console.log(error);
     return res.status(500).json(error.message);
   }
 };

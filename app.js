@@ -1,6 +1,7 @@
 //dependencies
 require("dotenv").config();
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+// process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+const { instrument } = require("@socket.io/admin-ui");
 const express = require("express");
 const cors = require("cors");
 const dayjs = require("dayjs");
@@ -21,13 +22,13 @@ const { sendMessage } = require("./websockets/sendMessage");
 // }
 // dataChecker();
 const app = express();
-// const whitelist = [process.env.URL, "https://api.paystack.co"];
-const whitelist = [process.env.URL];
+const whitelist = ["https://admin.socket.io", process.env.URL];
+// const whitelist = [process.env.URL];
 const corsOptions = {
   optionsSuccessStatus: 200,
-  Credential: true,
-  // origin: whitelist,
-  origin: "*",
+  credentials: true,
+  origin: whitelist,
+  // origin: "*",
 };
 // const corsOptions = {
 //   optionsSuccessStatus: 200,
@@ -51,11 +52,17 @@ app.use("/user", usersRoute);
 const server = app.listen(port, () => {
   console.log(`Server has started on port ${port}`);
 });
-const io = require("socket.io")(server, { cors: { corsOptions } });
+const io = require("socket.io")(server, { cors: corsOptions });
 io.on("connection", (socket) => {
   console.log(socket.id);
   socket.on("send_message", (message) => {
     sendMessage(message);
     socket.broadcast.emit("receive_message", message);
   });
+});
+
+instrument(io, {
+  auth: false,
+  mode: "development",
+  namespaceName: "/admin"
 });
