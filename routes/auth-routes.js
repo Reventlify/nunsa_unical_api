@@ -11,7 +11,10 @@ router.post("/sendcode", auth.sendCode);
 // send code for email verification
 router.post("/verifyemail", auth.verifyEmail);
 
-// send code for email verification
+// registers user
 router.post("/register", auth.register);
+
+// login user
+router.post("/login", auth.login);
 
 module.exports = router;

@@ -9,8 +9,7 @@ exports.logger = async (req, res) => {
 
     //Email Check
     const users = await pool.query(
-      `SELECT * FROM 
-      students WHERE student_email = $1`,
+      `SELECT * FROM students WHERE student_email = $1`,
       [email]
     );
     if (users.rows.length === 0)
