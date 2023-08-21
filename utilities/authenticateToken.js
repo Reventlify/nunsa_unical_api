@@ -10,7 +10,10 @@ function authenticateToken(req, res, next) {
     if (error) return res.status(403).json({ error: error.message });
     req.user = user.user_id;
     req.email = user.user_email;
-    req.name = user.user_name;
+    req.firstName = user.user_fname;
+    req.middleName = user.user_mname;
+    req.lastName = user.user_lname;
+    req.permissions = user.user_permissions;
     next();
   });
 }
