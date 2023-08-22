@@ -55,7 +55,7 @@ exports.sendVerificationCode = async (req, res) => {
 
     //sends verification code to clients mail
     const msg = {
-      from: "NUNSA UNICAL <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
       to: email, // list of receivers
       subject: "Email Verification", // Subject line
       text: `${neat(
