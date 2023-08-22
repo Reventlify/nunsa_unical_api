@@ -41,14 +41,14 @@ exports.register = async (req, res) => {
       [
         (await sessionExistence(matNo)).session_id,
         await idGenerator.clientID(),
-        email,
-        matNo,
+        email.toLowerCase(),
+        matNo.toLowerCase(),
         fName.toLowerCase(),
         mName.toLowerCase(),
         lName.toLowerCase(),
         "member",
         hashedPassword,
-        gender,
+        gender.toLowerCase(),
         dayjs().format(),
       ]
     );
