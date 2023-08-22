@@ -65,30 +65,30 @@ exports.register = async (req, res) => {
 
     //Company Reg alert
     const msg = {
-      from: "NUNSA UNICAL <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
       to: "edijay17@gmail.com", // list of receivers
-      subject: "Newly Registered Client", // Subject line
+      subject: "Newly Registered Student", // Subject line
       text: `Congrats ${capNsmalz.neat(
         newClient.rows[0].student_fname
-      )} just successfully registered with Reventlify.`, // plain text body
-      html: `<h1>Newly Registered Client</h1>
+      )} just successfully registered with NUNSA UCC.`, // plain text body
+      html: `<h1>Newly Registered Student</h1>
       <p>Congrats ${capNsmalz.neat(
         newClient.rows[0].student_fname
-      )} just successfully registered with <strong>Reventlify</strong></p>`, //HTML message
+      )} just successfully registered with <strong>NUNSA UCC</strong></p>`, //HTML message
     };
 
     //Welcome Message
     const msg1 = {
-      from: "Reventlify <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
       to: newClient.rows[0].student_email, // list of receivers
-      subject: "Welcome To Reventlify", // Subject line
+      subject: "Welcome To NUNSA UCC", // Subject line
       text: `${capNsmalz.neat(
         newClient.rows[0].student_fname
-      )} thank you for choosing Reventlify.`, // plain text body
-      html: `<h2>Welcome To Reventlify</h2>
+      )} welcome to NUNSA UCC.`, // plain text body
+      html: `<h2>Welcome To NUNSA UCC</h2>
         <p>${capNsmalz.neat(
           newClient.rows[0].student_fname
-        )} thank you for choosing <strong>Reventlify</strong>.</p>`, //HTML message
+        )} welcome to <strong>NUNSA UCC</strong>.</p>`, //HTML message
     };
 
     // send mail with defined transport object
@@ -96,12 +96,12 @@ exports.register = async (req, res) => {
     await transport.sendMail(msg1);
 
     // deletes client from limbo
-    await pool.query("DELETE FROM limbo WHERE client_email = $1", [email]);
+    await pool.query("DELETE FROM studentslimbo WHERE student_email = $1", [email]);
 
     // return
     return res.status(200).json({ Registration: "Successful!" });
   } catch (error) {
     console.log(error);
-    return res.status(500).json(error.message);
+    return res.status(500).json("Sorry something went wrong.");
   }
 };
