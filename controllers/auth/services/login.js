@@ -90,8 +90,8 @@ exports.logger = async (req, res) => {
     );
     return res.status(200).json({
       auth: true,
-      token: token,
       user: {
+        token: token,
         user_email,
         user_fname,
         user_mname,
