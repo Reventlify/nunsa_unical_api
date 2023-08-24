@@ -20,7 +20,6 @@ const { sendMessage } = require("./websockets/sendMessage");
 //    return console.log(error);
 //   }
 // }
-// dataChecker();
 const app = express();
 const whitelist = ["https://admin.socket.io", process.env.URL];
 // const whitelist = [process.env.URL];
@@ -35,7 +34,6 @@ const corsOptions = {
 //   Credential: true,
 //   // origin: "*",
 // };
-
 //middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -64,5 +62,5 @@ io.on("connection", (socket) => {
 instrument(io, {
   auth: false,
   mode: "development",
-  namespaceName: "/admin"
+  namespaceName: "/admin",
 });

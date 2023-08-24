@@ -35,18 +35,24 @@ const twoCharactersAreNumbersChecker = (characters) => {
   }
 };
 
-// actively grooms 2 characters inputs into session syntax and returns the correct syntax
+// actively grooms 2 or 5 characters inputs into session syntax and returns the correct syntax
 const inputGroomer = (victim) => {
   let groomed;
-  if (victim.length === 2 && twoCharactersAreNumbersChecker(victim) === true) {
-    const grooming = Number(victim) + 1;
-    groomed = `${victim}/${grooming}`;
-    return groomed;
-  } else if (victim.length === 4 && sessionSyntax(victim) === true) {
-    return victim;
-  } else {
-    return syntaxErrorMsg;
+  if (typeof victim === "string") {
+    if (
+      victim.length === 2 &&
+      twoCharactersAreNumbersChecker(victim) === true
+    ) {
+      const grooming = Number(victim) + 1;
+      groomed = `${victim}/${grooming}`;
+      return groomed;
+    } else if (victim.length === 5 && sessionSyntax(victim) === true) {
+      return victim;
+    } else {
+      return syntaxErrorMsg;
+    }
   }
+  return syntaxErrorMsg;
 };
 
 // handles session creation
@@ -87,4 +93,34 @@ exports.sessionExistence = async (input) => {
   // } catch (error) {
   //   return console.log(error);
   // }
+};
+
+// converts 20XX/20XX to XX/XX format
+exports.year_to_session_converter = (year) => {
+  if (typeof year === "string") {
+    const theSyntax = /[1234567890]/.test(year);
+    if (year.slice(2, 3) === "/") {
+      const sessionGotten = inputGroomer(year);
+      return sessionGotten;
+    } else {
+      if (theSyntax === true && year.slice(4, 5) === "/") {
+        const first = year.slice(2, 3);
+        const second = year.slice(3, 4);
+        const third = year.slice(7, 8);
+        const fourth = year.slice(-1);
+        if (
+          /[1234567890]/.test(first) === true &&
+          /[1234567890]/.test(second) === true &&
+          /[1234567890]/.test(third) === true &&
+          /[1234567890]/.test(fourth) === true
+        ) {
+          return `${first}${second}/${third}${fourth}`;
+        } else {
+          return syntaxErrorMsg;
+        }
+      }
+      return syntaxErrorMsg;
+    }
+  }
+  return syntaxErrorMsg;
 };

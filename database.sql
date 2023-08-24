@@ -54,10 +54,10 @@ CREATE TABLE materials (
     level_year TEXT NOT NULL,
     material_media TEXT NOT NULL,
     material_media_id TEXT NOT NULL,
-    course_code NUMERIC(17, 2) NOT NULL,
-    course_name TEXT NOT NULL,
+    course_code TEXT NOT NULL,
+    course_name TEXT,
     topic TEXT NOT NULL,
     lecturer TEXT NOT NULL,
     uploadstatus TEXT NOT NULL,
-    uploadedat DATETIME NOT NULL,
+    uploadedat  TIMESTAMP NOT NULL
 )
