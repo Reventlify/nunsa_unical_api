@@ -1,5 +1,23 @@
-<%- include('partials/header') -%> 
+<%- include('partials/header') -%>
 
-  <h1>Home</h1>
+<div class="d-flex" role="search">
+  <input
+    class="form-control me-2 b"
+    type="text"
+    id="searchInput"
+    placeholder="Search for a student"
+  />
+  <button class="btnct-nunsa bottomShadow" id="searchButton" type="button">
+    Search
+  </button>
+</div>
+<div id="loader" class="mt-5" style="display: none">
+  <div class="custom-beat-loader">
+    <div class="beat"></div>
+    <div class="beat middle"></div>
+    <div class="beat"></div>
+  </div>
+</div>
+<div id="results" class="mt5"></div>
 
-<%- include('partials/footer') -%> 
+<%- include('partials/footer') -%>
