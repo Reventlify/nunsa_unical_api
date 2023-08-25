@@ -9,6 +9,7 @@ const port = 5000;
 //requires root
 const authRoute = require("./routes/auth-routes");
 const usersRoute = require("./routes/users-routes");
+const devRoute = require("./routes/dev-routes");
 const { sendMessage } = require("./websockets/sendMessage");
 // const pool = require("./db");
 
@@ -35,7 +36,9 @@ const corsOptions = {
 //   // origin: "*",
 // };
 //middlewares
+app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
 app.use(
   express.json({
     limit: "50mb",
@@ -46,6 +49,7 @@ app.use(cors(corsOptions));
 //ROUTES
 app.use("/auth", authRoute);
 app.use("/user", usersRoute);
+app.use("/dev", devRoute);
 
 const server = app.listen(port, () => {
   console.log(`Server has started on port ${port}`);

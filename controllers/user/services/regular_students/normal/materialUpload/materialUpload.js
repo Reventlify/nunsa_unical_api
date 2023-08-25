@@ -108,7 +108,7 @@ exports.materialUpload = async (req, res) => {
         resultOfUpload.secure_url,
         resultOfUpload.public_id,
         courseCode,
-        await materialNameHandler(topic),
+        await materialNameHandler(topic, sch_session_id.rows[0].sch_session_id),
         lecturer.toLowerCase(),
         "pending",
         dayjs().format(),

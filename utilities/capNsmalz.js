@@ -40,15 +40,15 @@ exports.levelHandler = (level) => {
   return "Syntax error: Please enter a string for the level or year";
 };
 
-exports.materialNameHandler = async (name) => {
+exports.materialNameHandler = async (name, session_id) => {
   try {
     const material_name = await pool.query(
-      "SELECT * FROM materials WHERE topic like $1",
-      [`${name.toLowerCase()}%`]
+      "SELECT * FROM materials WHERE topic like $1 AND sch_session_id = $2",
+      [`${name.toLowerCase()}%`, session_id]
     );
     if (material_name.rows.length === 0) {
       return name.toLowerCase();
-    } else if(material_name.rows.length === 2){
+    } else if (material_name.rows.length === 2) {
       if (/[1234567890]/.test(name.slice(-1))) {
         const refinery = 1;
         const refined = `${name.slice(
@@ -61,10 +61,7 @@ exports.materialNameHandler = async (name) => {
       }
     } else {
       const refinery = material_name.rows.length - 1;
-      const refined = `${name.slice(
-        0,
-        name.length
-      )}_${refinery}`.toLowerCase();
+      const refined = `${name.slice(0, name.length)}_${refinery}`.toLowerCase();
       return refined;
     }
   } catch (error) {
