@@ -11,7 +11,8 @@ const performSearch = async () => {
   const resultsDiv = document.getElementById("results");
 
   // You can replace this URL with the actual API endpoint
-  const apiUrl = await fetch(`http://localhost:5000/dev/search_students`, {
+  // const apiUrl = await fetch(`http://localhost:5000/dev/search_students`, {
+  const apiUrl = await fetch(`https://api-nunsaunicaldev.onrender.com/dev/search_students`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
