@@ -8,7 +8,11 @@ const { sizeChecker } = require("../../../../../../utilities/sizeChecker");
 const cloudinary = require("../../../../../../utilities/cloudinary");
 const pool = require("../../../../../../db");
 const { materialID } = require("../../../../../../utilities/IDGenerator");
-const { levelHandler, neat, materialNameHandler } = require("../../../../../../utilities/capNsmalz");
+const {
+  levelHandler,
+  neat,
+  materialNameHandler,
+} = require("../../../../../../utilities/capNsmalz");
 
 const message = (
   fName,
@@ -47,7 +51,7 @@ exports.materialUpload = async (req, res) => {
     const uploader_email = req.email;
     const uploader_firstName = req.firstName;
     const uploader_lastName = req.lastName;
-    const refinedSession = year_to_session_converter(_.trim(session));
+    const refinedSession = await year_to_session_converter(_.trim(session));
     const refinedLevel = levelHandler(_.trim(level_year));
 
     // if the session format is wrong
@@ -66,7 +70,7 @@ exports.materialUpload = async (req, res) => {
     const resultOfUpload = await cloudinary.uploader.upload(pdf, {
       folder: `${refinedSession.slice(0, 2)}_${refinedSession.slice(
         -2
-      )} materials`,
+      )}_materials`,
     });
 
     const sch_session_id = await pool.query(
@@ -129,18 +133,18 @@ exports.materialUpload = async (req, res) => {
       from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
       to: uploader_email, // list of receivers
       subject: "Material Upload", // Subject line
-      text: `${neat(
-        uploader_firstName
-      )} You have successfully uploaded ${materialUploaded.rows[0].topic}, a ${refinedLevel} level material, 
+      text: `${neat(uploader_firstName)} You have successfully uploaded ${
+        materialUploaded.rows[0].topic
+      }, a ${refinedLevel} level material,
       with the course code: ${courseCode}. Your upload is going to be reviewed before it can be visibile to your colleagues,
       you'd be notified immediately it gets approved. Thank you.
       `, // plain text body
       html: `<h2>Material Upload</h2>
         <p>
-        ${neat(
-          uploader_firstName
-        )} You have successfully uploaded <strong>${materialUploaded.rows[0].topic}</strong>, 
-        a ${refinedLevel} level material, with the course code: ${courseCode}. 
+        ${neat(uploader_firstName)} You have successfully uploaded <strong>${
+        materialUploaded.rows[0].topic
+      }</strong>,
+        a ${refinedLevel} level material, with the course code: ${courseCode}.
         Your upload is going to be reviewed before it can be visibile to your colleagues,
         you'd be notified immediately it gets approved. Thank you.
         </p>
@@ -179,6 +183,7 @@ exports.materialUpload = async (req, res) => {
       // response
       return res.status(200).json("Upload successful!");
     }
+    // return res.status(200).json("Upload successful!");
   } catch (error) {
     console.log(error);
     return res.status(500).json("Sorry something went wrong.");

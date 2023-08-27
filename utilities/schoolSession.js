@@ -96,7 +96,7 @@ exports.sessionExistence = async (input) => {
 };
 
 // converts 20XX/20XX to XX/XX format
-exports.year_to_session_converter = (year) => {
+exports.year_to_session_converter = async (year) => {
   if (typeof year === "string") {
     const theSyntax = /[1234567890]/.test(year);
     if (year.slice(2, 3) === "/") {
@@ -114,7 +114,20 @@ exports.year_to_session_converter = (year) => {
           /[1234567890]/.test(third) === true &&
           /[1234567890]/.test(fourth) === true
         ) {
-          return `${first}${second}/${third}${fourth}`;
+          const sessionGotten = `${first}${second}/${third}${fourth}`;
+          const sch_session = await pool.query(
+            "SELECT sch_session_id FROM sch_sessions WHERE sch_session = $1",
+            [sessionGotten]
+          );
+
+          if (sch_session.rows.length === 0) {
+            const createSession = await pool.query(
+              `INSERT INTO sch_sessions(sch_session_id, sch_session, createdat) VALUES($1, $2, $3) RETURNING *`,
+              [await sessionID(), sessionGotten, dayjs().format()]
+            );
+            return sessionGotten;
+          }
+          return sessionGotten;
         } else {
           return syntaxErrorMsg;
         }
