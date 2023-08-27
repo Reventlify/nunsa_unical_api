@@ -3,6 +3,8 @@ const pool = require("../db");
 const { sessionID } = require("./IDGenerator");
 
 const syntaxErrorMsg = "Please enter a string with the correct syntax";
+const currentYear = new Date().getFullYear();
+const currentYearLastDigits = currentYear.toString().slice(-2);
 
 // checks if the session inputed is in the correct syntax
 const sessionSyntax = (text) => {
@@ -55,6 +57,76 @@ const inputGroomer = (victim) => {
   return syntaxErrorMsg;
 };
 
+// active sessions manager
+// (on sesion creation)
+const updateSessions = async (sessionGiven) => {
+  const session = inputGroomer(sessionGiven);
+  try {
+    // Query rows with the provided session format (e.g., '16/17')
+    const queryResult = await pool.query(
+      "SELECT sch_session, sch_session_id FROM sch_sessions WHERE sch_session = $1",
+      [session]
+    );
+    // if (queryResult.rows.length === 1) {
+    const schSession = queryResult.rows[0];
+    // console.log(`firstGate: ${schSession.sch_session}`);
+    const firstTwoDigits = Number(schSession.sch_session.slice(0, 2));
+
+    //   if this year is the current school session
+    // if (firstTwoDigits === Number(currentYearLastDigits)) {
+    // checks for all sessions before this session
+    const secondQueryResult = await pool.query(
+      "SELECT sch_session FROM sch_sessions WHERE sch_session like $1",
+      [`${firstTwoDigits - 1}%`]
+    );
+    const thirdQueryResult = await pool.query(
+      "SELECT sch_session FROM sch_sessions WHERE sch_session like $1",
+      [`${firstTwoDigits - 2}%`]
+    );
+    const fourthQueryResult = await pool.query(
+      "SELECT sch_session FROM sch_sessions WHERE sch_session like $1",
+      [`${firstTwoDigits - 3}%`]
+    );
+    const fifthQueryResult = await pool.query(
+      "SELECT sch_session FROM sch_sessions WHERE sch_session like $1",
+      [`${firstTwoDigits - 4}%`]
+    );
+
+    // if any is not available
+    if (
+      secondQueryResult.rows.length === 0 ||
+      thirdQueryResult.rows.length === 0 ||
+      fourthQueryResult.rows.length === 0 ||
+      fifthQueryResult.rows.length === 0
+    ) {
+      for (let i = 1; i <= 4; i++) {
+        const firstPart = Number(firstTwoDigits) - i;
+        const secondPart = Number(firstTwoDigits) - (i - 1);
+        const newSession = `${firstPart}/${secondPart}`;
+        // console.log(`secondGate: ${newSession}`);
+        const checkIndividually = await pool.query(
+          "SELECT sch_session FROM sch_sessions WHERE sch_session = $1",
+          [newSession]
+        );
+        // insert the absent session
+        if (checkIndividually.rows.length === 0) {
+          // console.log(`thirdGate: ${newSession}`);
+          await pool.query(
+            "INSERT INTO sch_sessions(sch_session_id, sch_session, createdat) VALUES($1, $2, $3) RETURNING *",
+            [await sessionID(), newSession, dayjs().format()]
+          );
+        }
+      }
+    }
+    // }
+    return `sessionUpdate result: ${schSession.sch_session_id}`;
+    // }
+    // return "Session update handler error";
+  } catch (error) {
+    return console.error("Error:", error);
+  }
+};
+
 // handles session creation
 exports.sessionExistence = async (input) => {
   const sessionGotten = inputGroomer(input.slice(0, 2));
@@ -66,33 +138,32 @@ exports.sessionExistence = async (input) => {
       existedPrev: false,
     };
   } else {
-    const sch_session = await pool.query(
-      `SELECT * FROM sch_sessions WHERE sch_session = $1`,
+    const theSession = await pool.query(
+      "SELECT sch_session, sch_session_id FROM sch_sessions WHERE sch_session = $1",
       [sessionGotten]
     );
-    if (sch_session.rows.length === 0) {
-      const createSession = await pool.query(
-        `INSERT INTO sch_sessions(sch_session_id, sch_session, createdat) VALUES($1, $2, $3) RETURNING *`,
+    if (theSession.rows.length === 0) {
+      const sch_session = await pool.query(
+        "INSERT INTO sch_sessions(sch_session_id, sch_session, createdat) VALUES($1, $2, $3) RETURNING *",
         [await sessionID(), sessionGotten, dayjs().format()]
       );
-
-      console.log(createSession.rows[0].sch_session_id);
+      // Call the function with a session parameter (e.g., '16/17')
+      const theResult = await updateSessions(sessionGotten);
+      console.log(theResult);
       return {
         success: true,
-        session_id: createSession.rows[0].sch_session_id,
-        existedPrev: false,
+        session_id: sch_session.rows[0].sch_session_id,
+        existedPrev: true,
       };
     }
-    console.log(sch_session.rows[0].sch_session_id);
+    // Call the function with a session parameter (e.g., '16/17')
+    await updateSessions(sessionGotten);
     return {
       success: true,
-      session_id: sch_session.rows[0].sch_session_id,
+      session_id: theSession.rows[0].sch_session_id,
       existedPrev: true,
     };
   }
-  // } catch (error) {
-  //   return console.log(error);
-  // }
 };
 
 // converts 20XX/20XX to XX/XX format
@@ -136,4 +207,30 @@ exports.year_to_session_converter = async (year) => {
     }
   }
   return syntaxErrorMsg;
+};
+
+exports.levelDeterminant = async (session) => {
+  try {
+    const sessionGotten = inputGroomer(session);
+    const activeSessions = await pool.query(`
+    SELECT sch_session_id, sch_session, createdat
+    FROM sch_sessions
+    ORDER BY LEFT(sch_session, 2) DESC
+    FETCH FIRST 5 ROW ONLY
+    `);
+
+    if (sessionGotten === activeSessions.rows[0].sch_session) {
+      return "500";
+    } else if (sessionGotten === activeSessions.rows[1].sch_session) {
+      return "400";
+    } else if (sessionGotten === activeSessions.rows[2].sch_session) {
+      return "300";
+    } else if (sessionGotten === activeSessions.rows[3].sch_session) {
+      return "200";
+    } else {
+      return "100";
+    }
+  } catch (error) {
+    return console.log(error);
+  }
 };

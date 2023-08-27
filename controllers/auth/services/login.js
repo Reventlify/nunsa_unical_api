@@ -1,6 +1,7 @@
 const pool = require("../../../db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { levelDeterminant } = require("../../../utilities/schoolSession");
 
 //login begin
 exports.logger = async (req, res) => {
@@ -9,7 +10,33 @@ exports.logger = async (req, res) => {
 
     //Email Check
     const users = await pool.query(
-      `SELECT * FROM students WHERE student_email = $1`,
+      `
+      SELECT 
+      sch_sessions.sch_session,
+      students.student_email,
+      students.student_role,
+      students.student_fname,
+      students.student_mname,
+      students.student_lname,
+      students.student_id,
+      students.student_mat_no,
+      students.student_password
+      FROM students 
+      LEFT JOIN sch_sessions 
+      ON 
+      students.sch_session_id = sch_sessions.sch_session_id
+      WHERE students.student_email = $1
+      GROUP BY 
+      sch_sessions.sch_session,
+      students.student_email,
+      students.student_role,
+      students.student_fname,
+      students.student_mname,
+      students.student_lname,
+      students.student_id,
+      students.student_mat_no,
+      students.student_password;
+      `,
       [email]
     );
     if (users.rows.length === 0)
@@ -23,6 +50,8 @@ exports.logger = async (req, res) => {
     if (!validPassword) return res.status(401).json("Incorrect password!");
 
     //JWT
+    const user_session = users.rows[0].sch_session;
+    const user_mat_no = users.rows[0].student_mat_no;
     const user_email = users.rows[0].student_email;
     const user_fname = users.rows[0].student_fname;
     const user_mname = users.rows[0].student_mname;
@@ -77,6 +106,8 @@ exports.logger = async (req, res) => {
     const token = jwt.sign(
       {
         user_id,
+        user_mat_no,
+        user_session,
         user_email,
         user_fname,
         user_mname,
@@ -85,21 +116,28 @@ exports.logger = async (req, res) => {
       },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "55m",
+        expiresIn: "60m",
       }
     );
+    // gets user level
+    const level = await levelDeterminant(user_session);
+
     return res.status(200).json({
       auth: true,
       user: {
         token: token,
+        user_mat_no,
+        user_session,
         user_email,
         user_fname,
         user_mname,
         user_lname,
+        level,
         user_permissions,
       },
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json("Something went wrong.");
   }
 };

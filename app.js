@@ -36,7 +36,7 @@ const corsOptions = {
 //   // origin: "*",
 // };
 //middlewares
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(
@@ -55,7 +55,9 @@ const server = app.listen(port, () => {
   console.log(`Server has started on port ${port}`);
 });
 const io = require("socket.io")(server, { cors: corsOptions });
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
+  // Call the function with a session parameter (e.g., '16/17')
+  // await updateSessions("15/16");
   console.log(socket.id);
   socket.on("send_message", (message) => {
     sendMessage(message);

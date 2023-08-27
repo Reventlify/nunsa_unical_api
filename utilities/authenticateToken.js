@@ -9,6 +9,8 @@ function authenticateToken(req, res, next) {
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
     if (error) return res.status(403).json({ error: error.message });
     req.user = user.user_id;
+    req.mat_no = user.user_mat_no;
+    req.session = user.user_session;
     req.email = user.user_email;
     req.firstName = user.user_fname;
     req.middleName = user.user_mname;

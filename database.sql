@@ -61,3 +61,27 @@ CREATE TABLE materials (
     uploadstatus TEXT NOT NULL,
     uploadedat  TIMESTAMP NOT NULL
 )
+
+SELECT 
+    sch_sessions.sch_session,
+    students.student_email,
+    students.student_fname,
+    students.student_mname,
+    students.student_lname,
+    students.student_id,
+    students.student_mat_no,
+    students.student_password
+    FROM students 
+    LEFT JOIN sch_sessions 
+    ON 
+    students.sch_session_id = sch_sessions.sch_session_id
+    WHERE students.student_email = 'edijay17@gmail.com'
+    GROUP BY 
+    sch_sessions.sch_session,
+    students.student_email,
+    students.student_fname,
+    students.student_mname,
+    students.student_lname,
+    students.student_id,
+    students.student_mat_no,
+    students.student_password;

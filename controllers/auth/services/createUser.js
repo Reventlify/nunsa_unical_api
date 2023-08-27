@@ -29,7 +29,6 @@ exports.register = async (req, res) => {
 
     // hashes password
     const hashedPassword = await bcrypt.hash(password, 10);
-
     // registers user
     const newClient = await pool.query(
       `
@@ -96,7 +95,9 @@ exports.register = async (req, res) => {
     await transport.sendMail(msg1);
 
     // deletes client from limbo
-    await pool.query("DELETE FROM studentslimbo WHERE student_email = $1", [email]);
+    await pool.query("DELETE FROM studentslimbo WHERE student_email = $1", [
+      email,
+    ]);
 
     // return
     return res.status(200).json({ Registration: "Successful!" });
