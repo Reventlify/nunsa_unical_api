@@ -37,7 +37,7 @@ const message = (
       <p>
       ${neat(fName)}, your colleague ${neat(uploader_firstName)} ${neat(
       uploader_lastName
-    )} uploaded <strong>${topic}</strong>, 
+    )} uploaded <strong>${topic.toUpperCase()}</strong>, 
       a ${refinedLevel} level material, with the course code: ${course_code}. 
       Please logging to the NUNSA UCC portal and review the upload. Thank you.
       </p>
@@ -137,16 +137,16 @@ exports.materialUpload = async (req, res) => {
         uploader_firstName
       )}, you have successfully uploaded ${materialUploaded.rows[0].topic.toUpperCase()}, a ${refinedLevel} level material,
       with the course code: ${courseCode}. Your upload is going to be reviewed before it can be visibile to your colleagues,
-      you'd be notified immediately it gets approved. Thank you.
+      you will be notified immediately it gets approved. Thank you.
       `, // plain text body
       html: `<h2>Material Upload</h2>
         <p>
-        ${neat(uploader_firstName)} You have successfully uploaded <strong>${
-        materialUploaded.rows[0].topic
-      }</strong>,
+        ${neat(
+          uploader_firstName
+        )} you have successfully uploaded <strong>${materialUploaded.rows[0].topic.toUpperCase()}</strong>,
         a ${refinedLevel} level material, with the course code: ${courseCode}.
         Your upload is going to be reviewed before it can be visibile to your colleagues,
-        you'd be notified immediately it gets approved. Thank you.
+        you will be notified immediately it gets approved. Thank you.
         </p>
         `, //HTML message
     };
