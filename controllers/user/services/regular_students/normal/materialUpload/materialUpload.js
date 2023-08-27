@@ -31,7 +31,7 @@ const message = (
     text: `${neat(fName)}, your colleague ${neat(uploader_firstName)} ${neat(
       uploader_lastName
     )} uploaded ${topic.toUpperCase()}, a ${refinedLevel} level material, 
-    with the course code: ${course_code}. Please logging to the NUNSA UCC portal and review the upload. Thank you.
+    with the course code: ${course_code}. Please login to the NUNSA UCC portal and review the upload. Thank you.
     `, // plain text body
     html: `<h2>Material Upload</h2>
       <p>
@@ -39,7 +39,7 @@ const message = (
       uploader_lastName
     )} uploaded <strong>${topic.toUpperCase()}</strong>, 
       a ${refinedLevel} level material, with the course code: ${course_code}. 
-      Please logging to the NUNSA UCC portal and review the upload. Thank you.
+      Please login to the NUNSA UCC portal and review the upload. Thank you.
       </p>
       `, //HTML message
   };

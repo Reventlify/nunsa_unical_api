@@ -57,9 +57,10 @@ exports.logger = async (req, res) => {
     const user_mname = users.rows[0].student_mname;
     const user_lname = users.rows[0].student_lname;
     const user_id = users.rows[0].student_id;
+    const user_role = users.rows[0].student_role;
     const user_permissions =
       // permissions for normal members
-      users.rows[0].student_role === "member"
+      user_role === "member"
         ? {
             election: false,
             blockClass: false,
@@ -68,7 +69,7 @@ exports.logger = async (req, res) => {
             approvePDF: false,
           }
         : // permissions for class rep
-        users.rows[0].student_role === "class rep"
+        user_role === "class_rep"
         ? {
             election: false,
             blockClass: true,
@@ -77,8 +78,7 @@ exports.logger = async (req, res) => {
             approvePDF: true,
           }
         : // permissions for the presidents
-        users.rows[0].student_role === "pres" ||
-          users.rows[0].student_role === "v_pres"
+        user_role === "pres" || user_role === "v_pres"
         ? {
             election: true,
             blockClass: true,
@@ -87,7 +87,7 @@ exports.logger = async (req, res) => {
             approvePDF: true,
           }
         : // permissions for eleco chair
-        users.rows[0].student_role === "eleco"
+        user_role === "eleco"
         ? {
             election: true,
             blockClass: false,
@@ -132,6 +132,7 @@ exports.logger = async (req, res) => {
         user_fname,
         user_mname,
         user_lname,
+        user_role,
         level,
         user_permissions,
       },
