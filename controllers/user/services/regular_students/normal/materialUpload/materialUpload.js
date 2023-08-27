@@ -30,7 +30,7 @@ const message = (
     subject: "Material Upload", // Subject line
     text: `${neat(fName)}, your colleague ${neat(uploader_firstName)} ${neat(
       uploader_lastName
-    )} uploaded ${topic}, a ${refinedLevel} level material, 
+    )} uploaded ${topic.toUpperCase()}, a ${refinedLevel} level material, 
     with the course code: ${course_code}. Please logging to the NUNSA UCC portal and review the upload. Thank you.
     `, // plain text body
     html: `<h2>Material Upload</h2>
@@ -133,9 +133,9 @@ exports.materialUpload = async (req, res) => {
       from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
       to: uploader_email, // list of receivers
       subject: "Material Upload", // Subject line
-      text: `${neat(uploader_firstName)} You have successfully uploaded ${
-        materialUploaded.rows[0].topic
-      }, a ${refinedLevel} level material,
+      text: `${neat(
+        uploader_firstName
+      )}, you have successfully uploaded ${materialUploaded.rows[0].topic.toUpperCase()}, a ${refinedLevel} level material,
       with the course code: ${courseCode}. Your upload is going to be reviewed before it can be visibile to your colleagues,
       you'd be notified immediately it gets approved. Thank you.
       `, // plain text body
