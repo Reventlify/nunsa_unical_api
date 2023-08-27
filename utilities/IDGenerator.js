@@ -59,18 +59,20 @@ exports.materialID = async (sessionPrefix, level) => {
     letters: false,
     special: false,
   });
+  const begin = sessionPrefix.slice(0, 2);
+  const end = sessionPrefix.slice(-2);
   try {
     // Checks if the ID already exists
     const checker = await pool.query(
       "SELECT * FROM materials WHERE material_id = $1",
-      [`${sessionPrefix}_${id}_${level}`]
+      [`${begin}_${end}_${id}_${level}`]
     );
 
     if (checker.rows.length !== 0) {
       return materialID(sessionPrefix, level);
     } else {
       // Return Unique ID
-      return `${sessionPrefix}_${id}_${level}`;
+      return `${begin}_${end}_${id}_${level}`;
     }
   } catch (error) {
     return console.log(error);
