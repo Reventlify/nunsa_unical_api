@@ -83,7 +83,7 @@ exports.sendVerificationCode = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(418).json(error.message);
+    return res.status(500).json("Something went wrong...");
   }
 };
 
@@ -112,6 +112,6 @@ exports.verifyCode = async (req, res) => {
 
     return res.status(200).json({ message: "Email Verified!" });
   } catch (error) {
-    return res.status(500).json({ err: error.message });
+    return res.status(500).json("Something went wrong...");
   }
 };

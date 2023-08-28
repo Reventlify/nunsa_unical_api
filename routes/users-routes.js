@@ -7,4 +7,5 @@ const authenticateToken = require("../utilities/authenticateToken");
 const { Router } = require("express");
 // send code for email verification
 router.post("/upload_material", authenticateToken, user.uploadMaterial);
+router.get("/pending_materials/:level", authenticateToken, user.pendingMaterials);
 module.exports = router;

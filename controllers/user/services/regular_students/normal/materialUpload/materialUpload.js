@@ -46,7 +46,7 @@ const message = (
 };
 exports.materialUpload = async (req, res) => {
   try {
-    const { pdf, topic, session, courseCode, lecturer, level_year } = req.body;
+    const { pdf, topic, session, courseCode, lecturer, level_year , courseAbbr} = req.body;
     const uploader = req.user;
     const uploader_email = req.email;
     const uploader_firstName = req.firstName;
@@ -93,6 +93,7 @@ exports.materialUpload = async (req, res) => {
         material_media,
         material_media_id,
         course_code,
+        course_abbr,
         topic,
         lecturer,
         uploadstatus,
@@ -101,7 +102,7 @@ exports.materialUpload = async (req, res) => {
         VALUES(
           $1, $2, $3, $4, 
           $5, $6, $7, $8, 
-          $9, $10, $11
+          $9, $10, $11, $12
         ) RETURNING *
     `,
       [
@@ -112,78 +113,79 @@ exports.materialUpload = async (req, res) => {
         resultOfUpload.secure_url,
         resultOfUpload.public_id,
         courseCode,
+        courseAbbr.toLowerCase(),
         await materialNameHandler(topic, sch_session_id.rows[0].sch_session_id),
         lecturer.toLowerCase(),
         "pending",
         dayjs().format(),
       ]
     );
-    //credentials for email transportation
-    const transport = nodemailer.createTransport({
-      host: "smtp.office365.com",
-      post: 587,
-      auth: {
-        user: "reventlifyhub@outlook.com",
-        pass: process.env.MAIL,
-      },
-    });
+    // //credentials for email transportation
+    // const transport = nodemailer.createTransport({
+    //   host: "smtp.office365.com",
+    //   post: 587,
+    //   auth: {
+    //     user: "reventlifyhub@outlook.com",
+    //     pass: process.env.MAIL,
+    //   },
+    // });
 
-    //Mail to uploader
-    const msg = {
-      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
-      to: uploader_email, // list of receivers
-      subject: "Material Upload", // Subject line
-      text: `${neat(
-        uploader_firstName
-      )}, you have successfully uploaded ${materialUploaded.rows[0].topic.toUpperCase()}, a ${refinedLevel} level material,
-      with the course code: ${courseCode}. Your upload is going to be reviewed before it can be visibile to your colleagues,
-      you will be notified immediately it gets approved. Thank you.
-      `, // plain text body
-      html: `<h2>Material Upload</h2>
-        <p>
-        ${neat(
-          uploader_firstName
-        )} you have successfully uploaded <strong>${materialUploaded.rows[0].topic.toUpperCase()}</strong>,
-        a ${refinedLevel} level material, with the course code: ${courseCode}.
-        Your upload is going to be reviewed before it can be visibile to your colleagues,
-        you will be notified immediately it gets approved. Thank you.
-        </p>
-        `, //HTML message
-    };
-    let msg1;
-    if (courseRep.rows.length !== 0) {
-      msg1 = message(
-        courseRep.rows[0].fName,
-        courseCode.rows[0].student_email,
-        materialUploaded.rows[0].topic,
-        courseCode,
-        uploader_firstName,
-        uploader_lastName,
-        refinedLevel
-      );
+    // //Mail to uploader
+    // const msg = {
+    //   from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
+    //   to: uploader_email, // list of receivers
+    //   subject: "Material Upload", // Subject line
+    //   text: `${neat(
+    //     uploader_firstName
+    //   )}, you have successfully uploaded ${materialUploaded.rows[0].topic.toUpperCase()}, a ${refinedLevel} level material,
+    //   with the course code: ${courseCode}. Your upload is going to be reviewed before it can be visibile to your colleagues,
+    //   you will be notified immediately it gets approved. Thank you.
+    //   `, // plain text body
+    //   html: `<h2>Material Upload</h2>
+    //     <p>
+    //     ${neat(
+    //       uploader_firstName
+    //     )} you have successfully uploaded <strong>${materialUploaded.rows[0].topic.toUpperCase()}</strong>,
+    //     a ${refinedLevel} level material, with the course code: ${courseCode}.
+    //     Your upload is going to be reviewed before it can be visibile to your colleagues,
+    //     you will be notified immediately it gets approved. Thank you.
+    //     </p>
+    //     `, //HTML message
+    // };
+    // let msg1;
+    // if (courseRep.rows.length !== 0) {
+    //   msg1 = message(
+    //     courseRep.rows[0].fName,
+    //     courseCode.rows[0].student_email,
+    //     materialUploaded.rows[0].topic,
+    //     courseCode,
+    //     uploader_firstName,
+    //     uploader_lastName,
+    //     refinedLevel
+    //   );
 
-      // send mail with defined transport object
-      await transport.sendMail(msg);
-      await transport.sendMail(msg1);
-      // response
-      return res.status(200).json("Upload successful!");
-    } else {
-      msg1 = message(
-        "edidiong",
-        "edijay17@gmail.com",
-        materialUploaded.rows[0].topic,
-        courseCode,
-        uploader_firstName,
-        uploader_lastName,
-        refinedLevel
-      );
-      // send mail with defined transport object
-      await transport.sendMail(msg);
-      await transport.sendMail(msg1);
-      // response
-      return res.status(200).json("Upload successful!");
-    }
-    // return res.status(200).json("Upload successful!");
+    //   // send mail with defined transport object
+    //   await transport.sendMail(msg);
+    //   await transport.sendMail(msg1);
+    //   // response
+    //   return res.status(200).json("Upload successful!");
+    // } else {
+    //   msg1 = message(
+    //     "edidiong",
+    //     "edijay17@gmail.com",
+    //     materialUploaded.rows[0].topic,
+    //     courseCode,
+    //     uploader_firstName,
+    //     uploader_lastName,
+    //     refinedLevel
+    //   );
+    //   // send mail with defined transport object
+    //   await transport.sendMail(msg);
+    //   await transport.sendMail(msg1);
+    //   // response
+    //   return res.status(200).json("Upload successful!");
+    // }
+    return res.status(200).json("Upload successful!");
   } catch (error) {
     console.log(error);
     return res.status(500).json("Sorry something went wrong.");

@@ -85,3 +85,36 @@ SELECT
     students.student_id,
     students.student_mat_no,
     students.student_password;
+
+SELECT 
+    sch_sessions.sch_session,
+    materials.material_id,
+    students.student_email,
+    students.student_fname,
+    students.student_mname,
+    students.student_lname,
+    students.student_mat_no,
+    materials.level_year,
+    materials.material_media,
+    materials.course_code,
+    materials.topic,
+    materials.lecturer,
+    materials.uploadstatus,
+    materials.uploadedat
+    FROM materials 
+    LEFT JOIN sch_sessions 
+    ON 
+    materials.sch_session_id = sch_sessions.sch_session_id
+    LEFT JOIN students 
+    ON 
+    materials.uploadedby = students.student_id
+    WHERE materials.uploadstatus = 'pending' AND materials.level_year = '500'
+    GROUP BY 
+    sch_sessions.sch_session,
+    students.student_email,
+    students.student_fname,
+    students.student_mname,
+    students.student_lname,
+    students.student_id,
+    students.student_mat_no,
+    students.student_password;
