@@ -22,9 +22,9 @@ const message = (
   uploader_firstName,
   uploader_lastName,
   refinedLevel,
-  url
+  edit
 ) => {
-  console.log(url);
+  console.log(edit);
   //Mail to course rep
   return {
     from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
@@ -41,7 +41,7 @@ const message = (
       uploader_lastName
     )} uploaded <strong>${topic.toUpperCase()}</strong>, 
       a ${refinedLevel} level material, with the course code: ${course_code}. 
-      Please click <a href="${url}" target="_blank">here</a> to review the upload. Thank you.
+      Please click <a href="${edit}" target="_blank">here</a> to review the upload. Thank you.
       </p>
       `, //HTML message
   };
@@ -172,7 +172,7 @@ exports.materialUpload = async (req, res) => {
         uploader_firstName,
         uploader_lastName,
         refinedLevel,
-        `${process.env.URL}/student/courses/materials/review/${level_year}`
+        `https://nunsaunicaldev.onrender.com/student/courses/materials/review/${level_year}`
       );
 
       // send mail with defined transport object
