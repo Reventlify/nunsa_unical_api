@@ -24,7 +24,7 @@ const message = (
   refinedLevel,
   edit
 ) => {
-  console.log(edit);
+  console.log(`After: ${edit}`);
   //Mail to course rep
   return {
     from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
@@ -130,6 +130,8 @@ exports.materialUpload = async (req, res) => {
         dayjs().format(),
       ]
     );
+    const toLink = `https://nunsaunicaldev.onrender.com/student/courses/materials/review/${level_year}`;
+    console.log(`Before: ${toLink}`);
     //credentials for email transportation
     const transport = nodemailer.createTransport({
       host: "smtp.office365.com",
@@ -172,7 +174,7 @@ exports.materialUpload = async (req, res) => {
         uploader_firstName,
         uploader_lastName,
         refinedLevel,
-        `https://nunsaunicaldev.onrender.com/student/courses/materials/review/${level_year}`
+        toLink
       );
 
       // send mail with defined transport object
