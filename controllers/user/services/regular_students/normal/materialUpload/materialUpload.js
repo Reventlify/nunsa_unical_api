@@ -24,6 +24,7 @@ const message = (
   refinedLevel,
   url
 ) => {
+  console.log(url);
   //Mail to course rep
   return {
     from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
