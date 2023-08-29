@@ -130,7 +130,7 @@ exports.materialUpload = async (req, res) => {
         dayjs().format(),
       ]
     );
-    const toLink = `https://nunsaunicaldev.onrender.com/student/courses/materials/review/${level_year}`;
+    const toLink = `{${process.env.URL}/student/courses/materials/review/${level_year}`;
     console.log(`Before: ${toLink}`);
     //credentials for email transportation
     const transport = nodemailer.createTransport({
@@ -190,7 +190,8 @@ exports.materialUpload = async (req, res) => {
         courseCode,
         uploader_firstName,
         uploader_lastName,
-        refinedLevel
+        refinedLevel,
+        toLink
       );
       // send mail with defined transport object
       await transport.sendMail(msg);
