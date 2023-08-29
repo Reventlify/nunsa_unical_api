@@ -130,7 +130,7 @@ exports.materialUpload = async (req, res) => {
         dayjs().format(),
       ]
     );
-    const toLink = `{${process.env.URL}/student/courses/materials/review/${level_year}`;
+    const toLink = `${process.env.URL}/student/courses/materials/review/${level_year}`;
     console.log(`Before: ${toLink}`);
     //credentials for email transportation
     const transport = nodemailer.createTransport({
