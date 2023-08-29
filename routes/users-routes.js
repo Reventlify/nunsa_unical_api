@@ -6,6 +6,17 @@ const authenticateToken = require("../utilities/authenticateToken");
 //router
 const { Router } = require("express");
 // send code for email verification
+
+// uploads pdf
 router.post("/upload_material", authenticateToken, user.uploadMaterial);
-router.get("/pending_materials/:level", authenticateToken, user.pendingMaterials);
+
+// view pdfs awaiting approval
+router.get(
+  "/pending_materials/:level",
+  authenticateToken,
+  user.pendingMaterials
+);
+
+// approves the pdf file
+router.patch("/approve_material", authenticateToken, user.approveMaterial);
 module.exports = router;
