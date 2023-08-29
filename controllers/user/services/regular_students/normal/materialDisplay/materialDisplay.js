@@ -76,7 +76,7 @@ exports.viewMaterialsPending = async (req, res) => {
       materials.lecturer,
       materials.uploadstatus,
       materials.uploadedat
-      ORDER BY LEFT(sch_sessions.sch_session, 2) DESC
+      ORDER BY LEFT(sch_sessions.sch_session, 2) DESC, (materials.topic) ASC
       `,
       ["pending", level]
     );

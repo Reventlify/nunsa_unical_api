@@ -87,20 +87,21 @@ SELECT
     students.student_password;
 
 SELECT 
-    sch_sessions.sch_session,
-    materials.material_id,
-    students.student_email,
-    students.student_fname,
-    students.student_mname,
-    students.student_lname,
-    students.student_mat_no,
-    materials.level_year,
-    materials.material_media,
-    materials.course_code,
-    materials.topic,
-    materials.lecturer,
-    materials.uploadstatus,
-    materials.uploadedat
+      sch_sessions.sch_session,
+      materials.material_id,
+      students.student_email,
+      students.student_fname,
+      students.student_mname,
+      students.student_lname,
+      students.student_mat_no,
+      materials.level_year,
+      materials.material_media,
+      materials.course_code,
+      materials.course_abbr,
+      materials.topic,
+      materials.lecturer,
+      materials.uploadstatus,
+      materials.uploadedat
     FROM materials 
     LEFT JOIN sch_sessions 
     ON 
@@ -108,13 +109,21 @@ SELECT
     LEFT JOIN students 
     ON 
     materials.uploadedby = students.student_id
-    WHERE materials.uploadstatus = 'pending' AND materials.level_year = '500'
     GROUP BY 
-    sch_sessions.sch_session,
-    students.student_email,
-    students.student_fname,
-    students.student_mname,
-    students.student_lname,
-    students.student_id,
-    students.student_mat_no,
-    students.student_password;
+	  students.student_id,
+      sch_sessions.sch_session,
+      materials.material_id,
+      students.student_email,
+      students.student_fname,
+      students.student_mname,
+      students.student_lname,
+      students.student_mat_no,
+      materials.level_year,
+      materials.material_media,
+      materials.course_code,
+      materials.course_abbr,
+      materials.topic,
+      materials.lecturer,
+      materials.uploadstatus,
+      materials.uploadedat
+    ORDER BY LEFT(sch_sessions.sch_session, 2) DESC, (materials.topic) ASC;
