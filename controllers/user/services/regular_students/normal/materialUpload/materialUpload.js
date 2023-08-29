@@ -40,7 +40,7 @@ const message = (
       uploader_lastName
     )} uploaded <strong>${topic.toUpperCase()}</strong>, 
       a ${refinedLevel} level material, with the course code: ${course_code}. 
-      Please click on this link <a href="${url}" target="_blank"/> to review the upload. Thank you.
+      Please click <a href="${url}" target="_blank">here</a> to review the upload. Thank you.
       </p>
       `, //HTML message
   };
