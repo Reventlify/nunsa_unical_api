@@ -21,7 +21,8 @@ const message = (
   course_code,
   uploader_firstName,
   uploader_lastName,
-  refinedLevel
+  refinedLevel,
+  url
 ) => {
   //Mail to course rep
   return {
@@ -39,7 +40,7 @@ const message = (
       uploader_lastName
     )} uploaded <strong>${topic.toUpperCase()}</strong>, 
       a ${refinedLevel} level material, with the course code: ${course_code}. 
-      Please login to the NUNSA UCC portal and review the upload. Thank you.
+      Please click on this link <a href="${url}" target="_blank"/> to review the upload. Thank you.
       </p>
       `, //HTML message
   };
@@ -169,7 +170,8 @@ exports.materialUpload = async (req, res) => {
         courseCode,
         uploader_firstName,
         uploader_lastName,
-        refinedLevel
+        refinedLevel,
+        `${process.env.URL}/student/courses/materials/review/${level_year}`
       );
 
       // send mail with defined transport object
