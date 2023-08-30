@@ -4,6 +4,7 @@ const cloudinary = require("../../../../../../utilities/cloudinary");
 const {
   get_materials_for_a_course,
 } = require("../../../../../../utilities/materialQuery");
+const { neat } = require("../../../../../../utilities/capNsmalz");
 
 exports.approveAMaterial = async (req, res) => {
   try {
