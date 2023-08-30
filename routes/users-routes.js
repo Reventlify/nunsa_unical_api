@@ -34,9 +34,16 @@ router.delete(
   user.disapproveMaterial
 );
 
+// view Materials for a course
+router.get(
+  "/approved_materials/:session/:course",
+  authenticateToken,
+  user.approvedMatsCourse
+);
+
 // view Pending Materials for a course
 router.get(
-  "/pending_materials/:uploadstatus/:session/:course",
+  "/pending_materials/:session/:course",
   authenticateToken,
   user.pendingMatsCourse
 );

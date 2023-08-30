@@ -6,6 +6,7 @@ const {
   viewMaterialsPending,
   viewMaterialsPendingForACourse,
   viewMaterialsApproved,
+  viewMaterialsApprovedForACourse,
 } = require("./services/regular_students/normal/materialDisplay/materialDisplay");
 const {
   materialUpload,
@@ -25,6 +26,9 @@ exports.approveMaterial = approveAMaterial;
 
 // disapproves the pdf file
 exports.disapproveMaterial = materialNotApproved;
+
+// view Materials for a course
+exports.approvedMatsCourse = viewMaterialsApprovedForACourse;
 
 // view Pending Materials for a course
 exports.pendingMatsCourse = viewMaterialsPendingForACourse;
