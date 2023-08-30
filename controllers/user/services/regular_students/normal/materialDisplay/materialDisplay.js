@@ -1,27 +1,7 @@
 const pool = require("../../../../../../db");
-
-exports.viewMaterialsPending_courseCodeOnly = async (req, res) => {
-  try {
-    const { level } = req.body;
-    const permissions = req.permissions;
-    if (!permissions.approvePDF)
-      res
-        .status(400)
-        .json(
-          "You are not authorized to view materials waiting to be approved."
-        );
-    const pendingMaterials = await pool.query(
-      "SELECT * FROM materials WHERE uploadstatus = $1 AND level_year = $2",
-      ["pending", level]
-    );
-    if (pendingMaterials.rows.length === 0)
-      return res.status(202).json("No pending materials");
-    return res.status(200).json(pendingMaterials.rows);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json("Something went wrong.");
-  }
-};
+const {
+  get_materials_for_a_course,
+} = require("../../../../../../utilities/materialQueryForACourse");
 
 exports.viewMaterialsPending = async (req, res) => {
   try {
@@ -83,6 +63,33 @@ exports.viewMaterialsPending = async (req, res) => {
     if (pendingMaterials.rows.length === 0)
       return res.status(202).json("No pending materials");
     return res.status(200).json(pendingMaterials.rows);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Something went wrong.");
+  }
+};
+exports.viewMaterialsPendingForACourse = async (req, res) => {
+  try {
+    const { uploadstatus, session, course } = req.params;
+    const courseParts = course.split("_");
+    const course_abbr = courseParts[0];
+    const course_code = courseParts[1];
+    const permissions = req.permissions;
+    if (permissions.approvePDF)
+      return res
+        .status(400)
+        .json(
+          "You are not authorized to view materials waiting to be approved."
+        );
+
+    const materials = await get_materials_for_a_course(
+      uploadstatus,
+      session,
+      course_abbr,
+      course_code
+    );
+    if (materials.rows.length === 0) return res.status(202).json([]);
+    return res.status(200).json(materials.rows);
   } catch (error) {
     console.log(error);
     return res.status(500).json("Something went wrong.");

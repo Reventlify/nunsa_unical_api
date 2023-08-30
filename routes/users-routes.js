@@ -19,4 +19,18 @@ router.get(
 
 // approves the pdf file
 router.patch("/approve_material", authenticateToken, user.approveMaterial);
+
+// disapproves the pdf file
+router.delete(
+  "/disapprove_material",
+  authenticateToken,
+  user.disapproveMaterial
+);
+
+// view Pending Materials for a course
+router.get(
+  "/pending_materials/:uploadstatus/:session/:course",
+  authenticateToken,
+  user.pendingMatsCourse
+);
 module.exports = router;

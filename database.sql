@@ -55,7 +55,7 @@ CREATE TABLE materials (
     material_media TEXT NOT NULL,
     material_media_id TEXT NOT NULL,
     course_code TEXT NOT NULL,
-    course_name TEXT,
+    course_abbr TEXT,
     topic TEXT NOT NULL,
     lecturer TEXT NOT NULL,
     uploadstatus TEXT NOT NULL,
@@ -127,3 +127,49 @@ SELECT
       materials.uploadstatus,
       materials.uploadedat
     ORDER BY LEFT(sch_sessions.sch_session, 2) DESC, (materials.topic) ASC;
+
+
+SELECT 
+      sch_sessions.sch_session,
+      materials.material_id,
+      students.student_email,
+      students.student_fname,
+      students.student_mname,
+      students.student_lname,
+      students.student_mat_no,
+      materials.level_year,
+      materials.material_media,
+      materials.course_code,
+      materials.course_abbr,
+      materials.topic,
+      materials.lecturer,
+      materials.uploadstatus,
+      materials.uploadedat
+      FROM materials 
+      LEFT JOIN sch_sessions 
+      ON 
+      materials.sch_session_id = sch_sessions.sch_session_id
+      LEFT JOIN students 
+      ON 
+      materials.uploadedby = students.student_id
+      WHERE materials.uploadstatus = 'pending' AND 
+      materials.material_id LIKE '18%' AND 
+      materials.course_abbr = 'ana' AND materials.course_code = '519'
+      GROUP BY 
+	    students.student_id,
+      sch_sessions.sch_session,
+      materials.material_id,
+      students.student_email,
+      students.student_fname,
+      students.student_mname,
+      students.student_lname,
+      students.student_mat_no,
+      materials.level_year,
+      materials.material_media,
+      materials.course_code,
+      materials.course_abbr,
+      materials.topic,
+      materials.lecturer,
+      materials.uploadstatus,
+      materials.uploadedat
+      ORDER BY (materials.uploadedat) DESC;
