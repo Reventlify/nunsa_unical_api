@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const cloudinary = require("../../../../../../utilities/cloudinary");
 const {
   get_materials_for_a_course,
-} = require("../../../../../../utilities/materialQueryForACourse");
+} = require("../../../../../../utilities/materialQuery");
 
 exports.approveAMaterial = async (req, res) => {
   try {

@@ -43,7 +43,10 @@ const message = (
       uploader_lastName
     )} uploaded <strong>${topic.toUpperCase()}</strong>, 
       a ${refinedLevel} level material, with the course code: ${course_abbr.toUpperCase()} ${course_code} for ${session} session. 
-      Please click <a href="${edit}" target="_blank">here</a> to review the upload. Thank you.
+      Please click <a href="${edit}/${session.slice(
+      0,
+      2
+    )}/${course_abbr.toLowerCase()}_${course_code}" target="_blank">here</a> to review the upload. Thank you.
       </p>
       `, //HTML message
   };

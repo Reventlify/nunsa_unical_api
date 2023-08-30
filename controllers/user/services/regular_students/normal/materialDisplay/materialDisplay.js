@@ -1,11 +1,13 @@
 const pool = require("../../../../../../db");
 const {
   get_materials_for_a_course,
-} = require("../../../../../../utilities/materialQueryForACourse");
+  get_materials_for_a_level,
+} = require("../../../../../../utilities/materialQuery");
 
 exports.viewMaterialsPending = async (req, res) => {
   try {
     const { level } = req.params;
+    const uploadstatus = "pending";
     const permissions = req.permissions;
     if (permissions.approvePDF)
       return res
@@ -13,52 +15,9 @@ exports.viewMaterialsPending = async (req, res) => {
         .json(
           "You are not authorized to view materials waiting to be approved."
         );
-    const pendingMaterials = await pool.query(
-      `
-      SELECT 
-      sch_sessions.sch_session,
-      materials.material_id,
-      students.student_email,
-      students.student_fname,
-      students.student_mname,
-      students.student_lname,
-      students.student_mat_no,
-      materials.level_year,
-      materials.material_media,
-      materials.course_code,
-      materials.course_abbr,
-      materials.topic,
-      materials.lecturer,
-      materials.uploadstatus,
-      materials.uploadedat
-      FROM materials 
-      LEFT JOIN sch_sessions 
-      ON 
-      materials.sch_session_id = sch_sessions.sch_session_id
-      LEFT JOIN students 
-      ON 
-      materials.uploadedby = students.student_id
-      WHERE materials.uploadstatus = $1 AND materials.level_year = $2
-      GROUP BY 
-	    students.student_id,
-      sch_sessions.sch_session,
-      materials.material_id,
-      students.student_email,
-      students.student_fname,
-      students.student_mname,
-      students.student_lname,
-      students.student_mat_no,
-      materials.level_year,
-      materials.material_media,
-      materials.course_code,
-      materials.course_abbr,
-      materials.topic,
-      materials.lecturer,
-      materials.uploadstatus,
-      materials.uploadedat
-      ORDER BY LEFT(sch_sessions.sch_session, 2) DESC, (materials.topic) ASC
-      `,
-      ["pending", level]
+    const pendingMaterials = await get_materials_for_a_level(
+      uploadstatus,
+      level
     );
     if (pendingMaterials.rows.length === 0)
       return res.status(202).json("No pending materials");
@@ -96,15 +55,24 @@ exports.viewMaterialsPendingForACourse = async (req, res) => {
   }
 };
 
-exports.viewMaterialsApproved_courseCodeOnly = async (req, res) => {
+exports.viewMaterialsApproved = async (req, res) => {
   try {
-    return;
+    const { level } = req.params;
+    const uploadstatus = "approved";
+    const approvedMaterials = await get_materials_for_a_level(
+      uploadstatus,
+      level
+    );
+    if (approvedMaterials.rows.length === 0)
+      return res.status(202).json("No material available");
+    return res.status(200).json(approvedMaterials.rows);
   } catch (error) {
-    return;
+    console.log(error);
+    return res.status(500).json("Something went wrong.");
   }
 };
 
-exports.viewMaterialsApproved = async (req, res) => {
+exports.viewMaterialsApprovedForACourse = async (req, res) => {
   try {
     return;
   } catch (error) {

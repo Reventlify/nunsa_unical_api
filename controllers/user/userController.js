@@ -5,6 +5,7 @@ const {
 const {
   viewMaterialsPending,
   viewMaterialsPendingForACourse,
+  viewMaterialsApproved,
 } = require("./services/regular_students/normal/materialDisplay/materialDisplay");
 const {
   materialUpload,
@@ -12,6 +13,9 @@ const {
 
 // uploads pdf
 exports.uploadMaterial = materialUpload;
+
+// view pdfs
+exports.approvedMaterials = viewMaterialsApproved;
 
 // view pdfs awaiting approval
 exports.pendingMaterials = viewMaterialsPending;

@@ -10,6 +10,13 @@ const { Router } = require("express");
 // uploads pdf
 router.post("/upload_material", authenticateToken, user.uploadMaterial);
 
+// view pdfs
+router.get(
+  "/approved_materials/:level",
+  authenticateToken,
+  user.approvedMaterials
+);
+
 // view pdfs awaiting approval
 router.get(
   "/pending_materials/:level",
