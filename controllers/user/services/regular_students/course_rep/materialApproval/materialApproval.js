@@ -45,12 +45,12 @@ exports.approveAMaterial = async (req, res) => {
     const msg = {
       from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
       to: uploaderDetails.rows[0].student_email, // list of receivers
-      subject: "Material Upload Approved", // Subject line
+      subject: "Material Approved", // Subject line
       text: `${neat(
         uploaderDetails.rows[0].student_fname
       )}, your material: ${updateMaterial.rows[0].topic.toUpperCase()} has been approved, now it can be viewed by other students. Thank you.
       `, // plain text body
-      html: `<h2>Material Upload Approved</h2>
+      html: `<h2>Material Approved</h2>
         <p>
         ${neat(
           uploaderDetails.rows[0].student_fname
@@ -111,12 +111,12 @@ exports.materialNotApproved = async (req, res) => {
     const msg = {
       from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
       to: uploaderDetails.rows[0].student_email, // list of receivers
-      subject: "Material Upload Approved", // Subject line
+      subject: "Material Disapproved", // Subject line
       text: `${neat(
         uploaderDetails.rows[0].student_fname
       )}, your material: ${materialExists.rows[0].topic.toUpperCase()} was disapproved, due to it not meeting the NUNSA UCC guidelines for material upload.
       `, // plain text body
-      html: `<h2>Material Upload Approved</h2>
+      html: `<h2>Material Disapproved</h2>
         <p>
         ${neat(
           uploaderDetails.rows[0].student_fname
