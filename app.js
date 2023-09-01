@@ -5,36 +5,24 @@ const { instrument } = require("@socket.io/admin-ui");
 const express = require("express");
 const cors = require("cors");
 const dayjs = require("dayjs");
+const jwt = require("jsonwebtoken");
 const port = 5000;
 //requires root
 const authRoute = require("./routes/auth-routes");
 const usersRoute = require("./routes/users-routes");
 const devRoute = require("./routes/dev-routes");
-const { sendMessage } = require("./websockets/sendMessage");
-// const pool = require("./db");
+const { sendMessage } = require("./websockets/sendMessage/sendMessage");
 
-// const dataChecker = async() => {
-//   try {
-//    const time = await pool.query(`SELECT createdat from studentslimbo WHERE student_email = 'edijay17@gmail.com'`);
-//    return console.log(dayjs(time.rows[0].createdat).format("HH:mm:ss"));
-//   } catch (error) {
-//    return console.log(error);
-//   }
-// }
 const app = express();
 const whitelist = ["https://admin.socket.io", process.env.URL];
-// const whitelist = [process.env.URL];
+
 const corsOptions = {
   optionsSuccessStatus: 200,
   credentials: true,
   origin: whitelist,
   // origin: "*",
 };
-// const corsOptions = {
-//   optionsSuccessStatus: 200,
-//   Credential: true,
-//   // origin: "*",
-// };
+
 //middlewares
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -55,15 +43,95 @@ const server = app.listen(port, () => {
   console.log(`Server has started on port ${port}`);
 });
 const io = require("socket.io")(server, { cors: corsOptions });
+
+const connectedSockets = {}; // Map to store connected sockets by socket.id
+
 io.on("connection", async (socket) => {
-  // Call the function with a session parameter (e.g., '16/17')
-  // await updateSessions("15/16");
-  console.log(socket.id);
-  socket.on("send_message", (message) => {
-    sendMessage(message);
-    socket.broadcast.emit("receive_message", message);
-  });
+  const { token } = socket.handshake.query; // Decode the JWT token
+  if (!token) {
+    console.log(`Socket disconnected for userID: ${socket.id}`);
+    // Handle the case where no token is provided
+    socket.disconnect();
+    return;
+  }
+  const decodedT = jwt.decode(token);
+  try {
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET); // Verify the token
+    const userID = decodedToken.user_id;
+    socket.id = userID;
+    if (!connectedSockets[socket.id]) {
+      // Store the socket in the connectedSockets map
+      connectedSockets[socket.id] = socket;
+      // console.log(`user connected: ${socket.id}`);
+      // Emit a message to the newly connected user
+      socket.emit('welcome', decodedT.exp);
+    }
+    let intervalTimer; // Variable to store the interval timer reference
+    // Periodically check the token's expiration
+    const tokenExpirationCheck = () => {
+      // console.log(`Called for user: ${socket.id}`);
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      if (decodedToken.exp <= currentTimestamp) {
+        // Token has expired
+        // console.log("Called Token has expired");
+        delete connectedSockets[socket.id];
+        socket.disconnect();
+        // console.log("Condition met");
+        clearInterval(intervalTimer); 
+      }
+    } // Check every 10 seconds
+    // Start the interval and store the timer reference
+    intervalTimer = setInterval(tokenExpirationCheck, 10000); // Run every 10 second
+    socket.on("request_disconnect", (user_id) => {
+      // console.log(`Socket disconnected for userID: ${socket.id} / ${user_id}`);
+      clearInterval(intervalTimer);
+      const targetSocket = connectedSockets[user_id];
+      if (targetSocket) {
+        delete targetSocket;
+        targetSocket.disconnect();
+      }
+    });
+    // send message
+    socket.on("send_message", async (msg, receiver_id) => {
+      const messageRes = await sendMessage(msg, receiver_id, socket.id);
+      // socket.broadcast.emit("receive_message", msg);
+      if (typeof messageRes !== "string") {
+        if (messageRes.delivered) {
+          socket.to(receiver_id).emit("receive_message", {
+            msg: messageRes.msg,
+            sender: messageRes.sender_id,
+            time: messageRes.time,
+          });
+        }
+      }
+    });
+  } catch (error) {
+    // Check if the token is valid and get the expiration timestamp
+    if (decodedT && decodedT.exp) {
+      const expirationTimestamp = decodedT.exp;
+      console.log(
+        "Token expiration timestamp (in seconds since Unix epoch):",
+        expirationTimestamp
+      );
+
+      // You can convert the timestamp to a JavaScript Date object if needed
+      const expirationDate = new Date(expirationTimestamp * 1000);
+      console.log("Token expiration date:", expirationDate);
+    } else {
+      console.log('Invalid or missing "exp" claim in the JWT token.');
+    }
+    // Handle token verification errors
+    console.error("Token verification error:", error);
+    socket.disconnect();
+  }
 });
+
+// // Later in your code, when you want to disconnect a specific socket:
+// const userIDToDisconnect = 'user_id_to_disconnect';
+// if (connectedSockets[userIDToDisconnect]) {
+//   connectedSockets[userIDToDisconnect].disconnect();
+//   // Optionally: delete connectedSockets[userIDToDisconnect] to remove it from the map
+// }
 
 instrument(io, {
   auth: false,

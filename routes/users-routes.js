@@ -26,7 +26,6 @@ router.get(
 
 // approves the pdf file
 router.patch("/approve_material", authenticateToken, user.approveMaterial);
-
 // disapproves the pdf file
 router.delete(
   "/disapprove_material",

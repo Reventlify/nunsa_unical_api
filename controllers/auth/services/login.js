@@ -119,13 +119,16 @@ exports.logger = async (req, res) => {
         expiresIn: "60m",
       }
     );
+    const expiresAt = jwt.decode(token);
     // gets user level
     const level = await levelDeterminant(user_session);
 
     return res.status(200).json({
       auth: true,
+      expiresAt: expiresAt.exp,
       user: {
         token: token,
+        user_id,
         user_mat_no,
         user_session,
         user_email,

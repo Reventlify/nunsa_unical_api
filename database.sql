@@ -62,6 +62,25 @@ CREATE TABLE materials (
     uploadedat  TIMESTAMP NOT NULL
 )
 
+CREATE TABLE conversations (
+  conversation_id TEXT NOT NULL UNIQUE,
+  user1_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  user2_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE messages (
+  message_id TEXT NOT NULL UNIQUE,
+  conversation_id TEXT NOT NULL REFERENCES conversations(conversation_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  sender_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  message_text TEXT,
+  message_media TEXT,
+  message_media_id TEXT,
+  delete_message TEXT,
+  seen TEXT,
+  sent_at TIMESTAMP NOT NULL
+);
+SELECT * FROM conversations WHERE user1_id = $1 
+OR user2_id = $1 AND conversation_id = $2 ;
 SELECT 
     sch_sessions.sch_session,
     students.student_email,
