@@ -1,3 +1,5 @@
+const pool = require("../../../../../../../db");
+
 exports.searchForStudents = async (req, res) => {
   try {
     const { searchfor } = req.params;

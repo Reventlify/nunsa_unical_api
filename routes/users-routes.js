@@ -8,7 +8,9 @@ const { Router } = require("express");
 
 /* General APIs begins */
 // searches for students
-router.get("/get_students/", user.getStudents);
+router.get("/get_students", user.getStudents);
+// gets all students except seeker
+router.get("/get_students/:seeker", user.getStudentsExceptSeeker);
 // searches for students
 router.get("/search_for_students/:searchfor", user.searchForStudents);
 /* General APIs ends */

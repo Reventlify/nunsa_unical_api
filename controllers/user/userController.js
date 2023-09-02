@@ -3,7 +3,7 @@ const {
   materialNotApproved,
 } = require("./services/regular_students/course_rep/materialApproval/materialApproval");
 const {
-  getStudents,
+  getStudents, getStudentsExceptSeeker,
 } = require("./services/regular_students/normal/getStudents");
 const {
   viewMaterialsPending,
@@ -21,6 +21,8 @@ const {
 /* General services begins */
 // gets all students
 exports.getStudents = getStudents;
+// gets all students except seeker
+exports.getStudentsExceptSeeker = getStudentsExceptSeeker;
 // searches for students
 exports.searchForStudents = searchForStudents;
 /* General services ends */
