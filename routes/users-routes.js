@@ -5,8 +5,13 @@ const user = require("../controllers/user/userController");
 const authenticateToken = require("../utilities/authenticateToken");
 //router
 const { Router } = require("express");
-// send code for email verification
 
+/* General APIs begins */
+// searches for students
+router.get("/search_for_students/:searchfor", user.searchForStudents);
+/* General APIs ends */
+
+/* Materials APIs begins */
 // uploads pdf
 router.post("/upload_material", authenticateToken, user.uploadMaterial);
 
@@ -46,4 +51,18 @@ router.get(
   authenticateToken,
   user.pendingMatsCourse
 );
+/* Materials APIs ends */
+
+/* Messaging APIs begins */
+/* Messaging APIs ends */
+
+/* Profile APIs begins */
+/* Profile APIs ends */
+
+/* Post APIs begins */
+/* Post APIs ends */
+
+/* Election APIs begins */
+/* Election APIs ends */
+
 module.exports = router;

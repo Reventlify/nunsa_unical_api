@@ -11,7 +11,14 @@ const {
 const {
   materialUpload,
 } = require("./services/regular_students/normal/materialUpload/materialUpload");
+const { searchForStudents } = require("./services/regular_students/normal/searchFor/searchForStudents/searchForStudents");
 
+/* General services begins */
+// searches for students
+exports.searchForStudents = searchForStudents;
+/* General services ends */
+
+/* Materials services begins */
 // uploads pdf
 exports.uploadMaterial = materialUpload;
 
@@ -32,3 +39,16 @@ exports.approvedMatsCourse = viewMaterialsApprovedForACourse;
 
 // view Pending Materials for a course
 exports.pendingMatsCourse = viewMaterialsPendingForACourse;
+/* Materials services ends */
+
+/* Messaging services begins */
+/* Messaging services ends */
+
+/* Profile services begins */
+/* Profile services ends */
+
+/* Post services begins */
+/* Post services ends */
+
+/* Election services begins */
+/* Election services ends */

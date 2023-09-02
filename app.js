@@ -62,28 +62,31 @@ io.on("connection", async (socket) => {
     if (!connectedSockets[socket.id]) {
       // Store the socket in the connectedSockets map
       connectedSockets[socket.id] = socket;
-      // console.log(`user connected: ${socket.id}`);
+      console.log(`user connected: ${socket.id}, before: no`);
       // Emit a message to the newly connected user
-      socket.emit('welcome', decodedT.exp);
+      socket.emit("welcome", decodedT.exp);
+    } else {
+      console.log(`user connected: ${socket.id}, before: yes`);
     }
+    const socketToDisconnect = connectedSockets[socket.id];
     let intervalTimer; // Variable to store the interval timer reference
     // Periodically check the token's expiration
     const tokenExpirationCheck = () => {
-      // console.log(`Called for user: ${socket.id}`);
+      console.log(`Called for user: ${socket.id}`);
       const currentTimestamp = Math.floor(Date.now() / 1000);
       if (decodedToken.exp <= currentTimestamp) {
         // Token has expired
-        // console.log("Called Token has expired");
+        console.log("Called Token has expired");
         delete connectedSockets[socket.id];
-        socket.disconnect();
-        // console.log("Condition met");
-        clearInterval(intervalTimer); 
+        socketToDisconnect.disconnect();
+        console.log("Condition met");
+        clearInterval(intervalTimer);
       }
-    } // Check every 10 seconds
+    }; // Check every 10 seconds
     // Start the interval and store the timer reference
     intervalTimer = setInterval(tokenExpirationCheck, 10000); // Run every 10 second
     socket.on("request_disconnect", (user_id) => {
-      // console.log(`Socket disconnected for userID: ${socket.id} / ${user_id}`);
+      console.log(`Socket disconnected for userID: ${socket.id} / ${user_id}`);
       clearInterval(intervalTimer);
       const targetSocket = connectedSockets[user_id];
       if (targetSocket) {

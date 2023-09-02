@@ -19,7 +19,7 @@ exports.viewMaterialsPending = async (req, res) => {
       level
     );
     if (pendingMaterials.rows.length === 0)
-      return res.status(202).json("No pending materials");
+      return res.status(404).json("No pending materials");
     return res.status(200).json(pendingMaterials.rows);
   } catch (error) {
     console.log(error);
@@ -47,7 +47,7 @@ exports.viewMaterialsPendingForACourse = async (req, res) => {
       course_abbr,
       course_code
     );
-    if (materials.rows.length === 0) return res.status(202).json([]);
+    if (materials.rows.length === 0) return res.status(404).json([]);
     return res.status(200).json(materials.rows);
   } catch (error) {
     console.log(error);
@@ -64,7 +64,7 @@ exports.viewMaterialsApproved = async (req, res) => {
       level
     );
     if (approvedMaterials.rows.length === 0)
-      return res.status(202).json("No material available");
+      return res.status(404).json("No material available");
     return res.status(200).json(approvedMaterials.rows);
   } catch (error) {
     console.log(error);
@@ -86,7 +86,7 @@ exports.viewMaterialsApprovedForACourse = async (req, res) => {
       course_abbr,
       course_code
     );
-    if (materials.rows.length === 0) return res.status(202).json([]);
+    if (materials.rows.length === 0) return res.status(404).json([]);
     return res.status(200).json(materials.rows);
   } catch (error) {
     console.log(error);
