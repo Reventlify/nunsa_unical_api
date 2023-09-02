@@ -3,6 +3,9 @@ const {
   materialNotApproved,
 } = require("./services/regular_students/course_rep/materialApproval/materialApproval");
 const {
+  getStudents,
+} = require("./services/regular_students/normal/getStudents");
+const {
   viewMaterialsPending,
   viewMaterialsPendingForACourse,
   viewMaterialsApproved,
@@ -11,9 +14,13 @@ const {
 const {
   materialUpload,
 } = require("./services/regular_students/normal/materialUpload/materialUpload");
-const { searchForStudents } = require("./services/regular_students/normal/searchFor/searchForStudents/searchForStudents");
+const {
+  searchForStudents,
+} = require("./services/regular_students/normal/searchFor/searchForStudents/searchForStudents");
 
 /* General services begins */
+// gets all students
+exports.getStudents = getStudents;
 // searches for students
 exports.searchForStudents = searchForStudents;
 /* General services ends */

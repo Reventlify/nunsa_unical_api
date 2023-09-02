@@ -8,6 +8,8 @@ const { Router } = require("express");
 
 /* General APIs begins */
 // searches for students
+router.get("/get_students/", user.getStudents);
+// searches for students
 router.get("/search_for_students/:searchfor", user.searchForStudents);
 /* General APIs ends */
 
