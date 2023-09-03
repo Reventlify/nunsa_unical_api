@@ -59,15 +59,15 @@ io.on("connection", async (socket) => {
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET); // Verify the token
     const userID = decodedToken.user_id;
     // console.log(connectedSockets);
-    
-  // Check if the user is already connected
-  if (connectedSockets[userID]) {
-    const existingSocket = connectedSockets[userID];
 
-    // Disconnect the existing socket
-    existingSocket.disconnect();
-    delete connectedSockets[socket.id];
-  }
+    // Check if the user is already connected
+    if (connectedSockets[userID]) {
+      const existingSocket = connectedSockets[userID];
+
+      // Disconnect the existing socket
+      existingSocket.disconnect();
+      delete connectedSockets[socket.id];
+    }
     // if (connectedSockets[socket.id]) {
     //   // Store the socket in the connectedSockets map
     //   // connectedSockets[socket.id] = socket;
@@ -120,7 +120,12 @@ io.on("connection", async (socket) => {
             // socket
             //   .to(receiver_id)
             // recipientSocketId
-            recipientSocketId.emit("receive_message", [messageRes.savedMessage]);
+            recipientSocketId.emit("receive_message", [
+              messageRes.savedMessage,
+            ]);
+            socketToDisconnect.emit("receive_message", [
+              messageRes.savedMessage,
+            ]);
           }
         }
       } else {

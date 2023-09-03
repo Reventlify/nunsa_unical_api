@@ -14,17 +14,10 @@ exports.saveMessage = async (conversation_id, sender_id, msg) => {
           delete_message,
           sent_at
         ) VALUES(
-          $1, $2, $3, $4, $5, $6
+          $1, $2, $3, $4, $5, CURRENT_TIMESTAMP
         ) RETURNING *
       `,
-      [
-        await messageID(),
-        conversation_id,
-        sender_id,
-        msg,
-        "no",
-        dayjs().format(),
-      ]
+      [await messageID(), conversation_id, sender_id, msg, "no"]
     );
 
     return saveMessageAction;
