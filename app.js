@@ -108,15 +108,15 @@ io.on("connection", async (socket) => {
 
     // send message
     socket.on("send_message", async (msg, receiver_id) => {
-      console.log(`sent: ${msg}`);
+      // console.log(`sent: ${msg}`);
       const recipientSocketId = connectedSockets[receiver_id];
       const messageRes = await sendMessage(msg, receiver_id, socket.id);
-      console.log(messageRes.savedMessage.message_text);
+      // console.log(messageRes.savedMessage.message_text);
       // socket.broadcast.emit("receive_message", msg);
       if (recipientSocketId) {
         if (typeof messageRes !== "string") {
           if (messageRes.delivered) {
-            console.log(`received: ${messageRes.savedMessage.message_text}`);
+            // console.log(`received: ${messageRes.savedMessage.message_text}`);
             // socket
             //   .to(receiver_id)
             // recipientSocketId
