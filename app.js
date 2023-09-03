@@ -58,27 +58,38 @@ io.on("connection", async (socket) => {
   try {
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET); // Verify the token
     const userID = decodedToken.user_id;
+    // console.log(connectedSockets);
+    
+  // Check if the user is already connected
+  if (connectedSockets[userID]) {
+    const existingSocket = connectedSockets[userID];
+
+    // Disconnect the existing socket
+    existingSocket.disconnect();
+    delete connectedSockets[socket.id];
+  }
+    // if (connectedSockets[socket.id]) {
+    //   // Store the socket in the connectedSockets map
+    //   // connectedSockets[socket.id] = socket;
+    //     delete connectedSockets[socket.id];
+    //   // console.log(`user connected: ${socket.id}, before: no`);
+    //   // Emit a message to the newly connected user
+    //   // socket.emit("welcome", decodedT.exp);
+    // }
     socket.id = userID;
-    if (!connectedSockets[socket.id]) {
-      // Store the socket in the connectedSockets map
-      connectedSockets[socket.id] = socket;
-      // console.log(`user connected: ${socket.id}, before: no`);
-      // Emit a message to the newly connected user
-      socket.emit("welcome", decodedT.exp);
-    } else {
-      console.log(`user connected: ${socket.id}, before: yes`);
-    }
+    connectedSockets[socket.id] = socket;
     const socketToDisconnect = connectedSockets[socket.id];
     let intervalTimer; // Variable to store the interval timer reference
     // Periodically check the token's expiration
     const tokenExpirationCheck = () => {
       // console.log(`Called for user: ${socket.id}`);
+      // console.log(connectedSockets);
       const currentTimestamp = Math.floor(Date.now() / 1000);
       if (decodedToken.exp <= currentTimestamp) {
         // Token has expired
         // console.log("Called Token has expired");
-        delete connectedSockets[socket.id];
         socketToDisconnect.disconnect();
+        delete connectedSockets[socket.id];
         // console.log("Condition met");
         clearInterval(intervalTimer);
       }
@@ -90,22 +101,30 @@ io.on("connection", async (socket) => {
       clearInterval(intervalTimer);
       const targetSocket = connectedSockets[user_id];
       if (targetSocket) {
-        delete targetSocket;
         targetSocket.disconnect();
+        delete connectedSockets[user_id];
       }
     });
+
     // send message
     socket.on("send_message", async (msg, receiver_id) => {
+      console.log(`sent: ${msg}`);
+      const recipientSocketId = connectedSockets[receiver_id];
       const messageRes = await sendMessage(msg, receiver_id, socket.id);
+      console.log(messageRes.savedMessage.message_text);
       // socket.broadcast.emit("receive_message", msg);
-      if (typeof messageRes !== "string") {
-        if (messageRes.delivered) {
-          socket.to(receiver_id).emit("receive_message", {
-            msg: messageRes.msg,
-            sender: messageRes.sender_id,
-            time: messageRes.time,
-          });
+      if (recipientSocketId) {
+        if (typeof messageRes !== "string") {
+          if (messageRes.delivered) {
+            console.log(`received: ${messageRes.savedMessage.message_text}`);
+            // socket
+            //   .to(receiver_id)
+            // recipientSocketId
+            recipientSocketId.emit("receive_message", [messageRes.savedMessage]);
+          }
         }
+      } else {
+        console.log(`Recipient socket not found for user: ${receiver_id}`);
       }
     });
   } catch (error) {

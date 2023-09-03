@@ -32,19 +32,13 @@ exports.sendMessage = async (msg, receiver_id, sender_id) => {
       if (savedMessage.rows.length === 0) {
         return {
           delivered: false,
-          msg,
-          sender_id,
-          conversation_id: conversationCreated.rows[0].conversation_id,
-          time: "",
+          savedMessage: null,
         };
       }
       // on successful save
       return {
         delivered: true,
-        msg,
-        sender_id,
-        conversation_id: savedMessage.rows[0].conversation_id,
-        time: savedMessage.rows[0].sent_at,
+        savedMessage: savedMessage.rows[0],
       };
     }
     const savedMessage = await saveMessage(
@@ -56,19 +50,13 @@ exports.sendMessage = async (msg, receiver_id, sender_id) => {
     if (savedMessage.rows.length === 0) {
       return {
         delivered: false,
-        msg,
-        sender_id,
-        conversation_id: conversationCreated.rows[0].conversation_id,
-        time: "",
+        savedMessage: null,
       };
     }
     // on successful save
     return {
       delivered: true,
-      msg,
-      sender_id,
-      conversation_id: savedMessage.rows[0].conversation_id,
-      time: savedMessage.rows[0].sent_at,
+      savedMessage: savedMessage.rows[0],
     };
   } catch (error) {
     return console.log(error.message);

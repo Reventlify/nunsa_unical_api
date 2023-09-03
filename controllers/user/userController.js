@@ -14,6 +14,7 @@ const {
 const {
   materialUpload,
 } = require("./services/regular_students/normal/materialUpload/materialUpload");
+const { getMessages } = require("./services/regular_students/normal/messages/getMessages");
 const {
   searchForStudents,
 } = require("./services/regular_students/normal/searchFor/searchForStudents/searchForStudents");
@@ -51,6 +52,8 @@ exports.pendingMatsCourse = viewMaterialsPendingForACourse;
 /* Materials services ends */
 
 /* Messaging services begins */
+// gets messages
+exports.getMessages = getMessages
 /* Messaging services ends */
 
 /* Profile services begins */

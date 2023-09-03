@@ -58,6 +58,12 @@ router.get(
 /* Materials APIs ends */
 
 /* Messaging APIs begins */
+// gets messages
+router.get(
+  "/get_messages/:participants",
+  authenticateToken,
+  user.getMessages
+);
 /* Messaging APIs ends */
 
 /* Profile APIs begins */

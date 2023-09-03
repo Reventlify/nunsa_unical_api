@@ -79,8 +79,69 @@ CREATE TABLE messages (
   seen TEXT,
   sent_at TIMESTAMP NOT NULL
 );
-SELECT * FROM conversations WHERE user1_id = $1 
-OR user2_id = $1 AND conversation_id = $2 ;
+-- 
+WITH RankedMessages AS (
+  SELECT
+    m.conversation_id,
+    m.sender_id,
+    m.message_text,
+    m.message_media,
+    m.message_media_id,
+    m.delete_message,
+    m.seen,
+    m.sent_at,
+    ROW_NUMBER() OVER (PARTITION BY m.conversation_id ORDER BY m.sent_at DESC) AS row_num
+  FROM
+    messages m
+    INNER JOIN conversations c ON m.conversation_id = c.conversation_id
+  WHERE
+    c.user1_id = '26363' OR c.user2_id = '26363'
+)
+SELECT
+  rm.conversation_id,
+  rm.sender_id,
+  rm.message_text,
+  rm.message_media,
+  rm.message_media_id,
+  rm.delete_message,
+  rm.seen,
+  rm.sent_at
+FROM
+  RankedMessages rm
+WHERE
+  rm.row_num = 1;
+-- 
+SELECT 
+  messages.message_id,
+  messages.conversation_id,
+  messages.sender_id,
+  messages.message_text,
+  messages.message_media,
+  messages.sent_at
+  FROM messages
+  LEFT JOIN conversations
+  ON
+  messages.conversation_id = conversations.conversation_id
+  WHERE 
+  conversations.user1_id = $1 AND conversations.user2_id = $2 
+  OR 
+  conversations.user1_id = $2 AND conversations.user2_id = $1;
+  GROUP BY
+  messages.message_id,
+  messages.conversation_id,
+  messages.sender_id,
+  messages.message_text,
+  messages.message_media,
+  messages.sent_at
+  ORDER BY (messages.sent_at) ASC;
+SELECT * FROM messages
+  LEFT JOIN conversations
+  ON
+  messages.conversation_id = conversations.conversation_id
+  WHERE 
+  conversations.user1_id = $1 AND conversations.user2_id = $2 
+  OR 
+  conversations.user1_id = $2 AND conversations.user2_id = $1;
 SELECT 
     sch_sessions.sch_session,
     students.student_email,
