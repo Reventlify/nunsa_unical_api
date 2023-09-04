@@ -20,6 +20,12 @@ const {
   getConversations,
 } = require("./services/regular_students/normal/messages/getMessages");
 const {
+  postQuery,
+} = require("./services/regular_students/normal/postUpload/postQuery");
+const {
+  postUpload,
+} = require("./services/regular_students/normal/postUpload/postUpload");
+const {
   searchForStudents,
 } = require("./services/regular_students/normal/searchFor/searchForStudents/searchForStudents");
 
@@ -66,6 +72,8 @@ exports.getConversations = getConversations;
 /* Profile services ends */
 
 /* Post services begins */
+exports.postUpload = postUpload;
+exports.getPosts = postQuery;
 /* Post services ends */
 
 /* Election services begins */

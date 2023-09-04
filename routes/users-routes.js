@@ -68,6 +68,8 @@ router.get("/get_conversations", authenticateToken, user.getConversations);
 /* Profile APIs ends */
 
 /* Post APIs begins */
+router.post("/postupload", authenticateToken, user.postUpload);
+router.get("/getposts/:session", authenticateToken, user.getPosts);
 /* Post APIs ends */
 
 /* Election APIs begins */

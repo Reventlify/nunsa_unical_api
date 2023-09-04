@@ -126,3 +126,218 @@ exports.materialID = async (sessionPrefix, level) => {
     return console.log(error);
   }
 };
+// generates posts IDs
+exports.postID = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 16,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query("SELECT * FROM posts WHERE post_id = $1", [
+      id,
+    ]);
+
+    if (checker.rows.length !== 0) {
+      return postID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+// generates posts IDs
+exports.postLikesID = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM post_likes WHERE like_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return postLikesID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+// generates posts IDs
+exports.postDislikesID = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM post_dislikes WHERE dislike_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return postDislikesID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+// generates posts IDs
+exports.postCommentsID = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM post_comments WHERE comment_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return postCommentsID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+// generates posts IDs
+exports.postCommentLikesID = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM comment_likes WHERE like_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return postCommentLikesID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+// generates posts IDs
+exports.postCommentDislikesID = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM comment_dislikes WHERE dislike_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return postCommentDislikesID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+// generates posts IDs
+exports.postCommentReplies = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM comment_replies WHERE reply_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return postCommentReplies();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+// generates posts IDs
+exports.postCommentReplyLikes = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM reply_likes WHERE like_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return postCommentReplyLikes();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+// generates posts IDs
+exports.postCommentReplyDislikes = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM reply_dislikes WHERE dislike_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return postCommentReplyDislikes();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
