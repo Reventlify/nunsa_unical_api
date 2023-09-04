@@ -113,23 +113,26 @@ io.on("connection", async (socket) => {
       const messageRes = await sendMessage(msg, receiver_id, socket.id);
       // console.log(messageRes.savedMessage.message_text);
       // socket.broadcast.emit("receive_message", msg);
-      if (recipientSocketId) {
-        if (typeof messageRes !== "string") {
-          if (messageRes.delivered) {
-            // console.log(`received: ${messageRes.savedMessage.message_text}`);
-            // socket
-            //   .to(receiver_id)
-            // recipientSocketId
+      if (typeof messageRes !== "string") {
+        if (messageRes.delivered) {
+          // console.log(`received: ${messageRes.savedMessage.message_text}`);
+          // socket
+          //   .to(receiver_id)
+          // recipientSocketId
+          if (recipientSocketId) {
             recipientSocketId.emit("receive_message", [
               messageRes.savedMessage,
             ]);
-            socketToDisconnect.emit("receive_message", [
-              messageRes.savedMessage,
-            ]);
           }
+          socketToDisconnect.emit("receive_message", [messageRes.savedMessage]);
         }
-      } else {
-        console.log(`Recipient socket not found for user: ${receiver_id}`);
+      }
+    });
+
+    socket.on("typing", (bool, receiver_id) => {
+      const recipientSocketId = connectedSockets[receiver_id];
+      if (recipientSocketId) {
+        recipientSocketId.emit("isTyping", bool);
       }
     });
   } catch (error) {
