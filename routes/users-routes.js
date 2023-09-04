@@ -59,11 +59,9 @@ router.get(
 
 /* Messaging APIs begins */
 // gets messages
-router.get(
-  "/get_messages/:participants",
-  authenticateToken,
-  user.getMessages
-);
+router.get("/get_messages/:participants", authenticateToken, user.getMessages);
+// gets conversations
+router.get("/get_conversations", authenticateToken, user.getConversations);
 /* Messaging APIs ends */
 
 /* Profile APIs begins */

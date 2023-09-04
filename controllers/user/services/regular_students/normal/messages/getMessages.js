@@ -85,37 +85,56 @@ exports.getConversations = async (req, res) => {
     const user = req.user;
     // Define the SQL query to get conversation
     const query = `
-      WITH RankedMessages AS (
-        SELECT
-          m.conversation_id,
-          m.sender_id,
-          m.message_text,
-          m.message_media,
-          m.message_media_id,
-          m.delete_message,
-          m.seen,
-          m.sent_at,
-          ROW_NUMBER() OVER (PARTITION BY m.conversation_id ORDER BY m.sent_at DESC) AS row_num
-        FROM
-          messages m
-          INNER JOIN conversations c ON m.conversation_id = c.conversation_id
-        WHERE
-          c.user1_id = $1 OR c.user2_id = $1
-      )
+    WITH RankedMessages AS (
       SELECT
-        rm.conversation_id,
-        rm.sender_id,
-        rm.message_text,
-        rm.message_media,
-        rm.message_media_id,
-        rm.delete_message,
-        rm.seen,
-        rm.sent_at
+        m.conversation_id,
+        m.sender_id,
+        m.message_text,
+        m.message_media,
+        m.message_media_id,
+        m.delete_message,
+        m.seen,
+        m.sent_at,
+        ROW_NUMBER() OVER (PARTITION BY m.conversation_id ORDER BY m.sent_at DESC) AS row_num,
+        c.user1_id AS user1,
+        c.user2_id AS user2
       FROM
-        RankedMessages rm
+        messages m
+        INNER JOIN conversations c ON m.conversation_id = c.conversation_id
       WHERE
-        rm.row_num = 1
-            `;
+        c.user1_id = $1 OR c.user2_id = $1
+    )
+    SELECT DISTINCT ON (rm.conversation_id)
+      rm.conversation_id,
+      rm.sender_id,
+      rm.message_text,
+      rm.message_media,
+      rm.message_media_id,
+      rm.delete_message,
+      rm.seen,
+      rm.sent_at,
+      CASE
+        WHEN rm.sender_id = $1 THEN other_user.student_fname
+        ELSE sender_user.student_fname
+      END AS other_user_fname,
+      CASE
+        WHEN rm.sender_id = $1 THEN other_user.student_lname
+        ELSE sender_user.student_lname
+      END AS other_user_lname,
+      CASE
+        WHEN rm.sender_id = $1 THEN other_user.student_id
+        ELSE sender_user.student_id
+      END AS other_user_id
+    FROM
+      RankedMessages rm
+      LEFT JOIN students sender_user ON rm.sender_id = sender_user.student_id
+      LEFT JOIN students other_user ON (rm.user1 = other_user.student_id OR rm.user2 = other_user.student_id)
+    WHERE
+      rm.row_num = 1
+    
+    
+    
+`;
 
     // Execute the SQL query with the search criteria
     const { rows } = await pool.query(query, [user]);

@@ -3,7 +3,8 @@ const {
   materialNotApproved,
 } = require("./services/regular_students/course_rep/materialApproval/materialApproval");
 const {
-  getStudents, getStudentsExceptSeeker,
+  getStudents,
+  getStudentsExceptSeeker,
 } = require("./services/regular_students/normal/getStudents");
 const {
   viewMaterialsPending,
@@ -14,7 +15,10 @@ const {
 const {
   materialUpload,
 } = require("./services/regular_students/normal/materialUpload/materialUpload");
-const { getMessages } = require("./services/regular_students/normal/messages/getMessages");
+const {
+  getMessages,
+  getConversations,
+} = require("./services/regular_students/normal/messages/getMessages");
 const {
   searchForStudents,
 } = require("./services/regular_students/normal/searchFor/searchForStudents/searchForStudents");
@@ -53,7 +57,9 @@ exports.pendingMatsCourse = viewMaterialsPendingForACourse;
 
 /* Messaging services begins */
 // gets messages
-exports.getMessages = getMessages
+exports.getMessages = getMessages;
+// gets conversations
+exports.getConversations = getConversations;
 /* Messaging services ends */
 
 /* Profile services begins */
