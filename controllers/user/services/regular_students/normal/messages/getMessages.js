@@ -94,7 +94,9 @@ exports.getConversations = async (req, res) => {
         m.message_media_id,
         m.delete_message,
         m.seen,
-        m.sent_at
+        m.sent_at,
+        c.user1_id,
+        c.user2_id
       FROM conversations c
       LEFT JOIN messages m ON c.conversation_id = m.conversation_id
       WHERE c.user1_id = $1 OR c.user2_id = $1
@@ -109,23 +111,23 @@ exports.getConversations = async (req, res) => {
       lm.seen,
       lm.sent_at,
       CASE
-        WHEN c.user1_id = $1 THEN other_user.student_fname
+        WHEN lm.user1_id = $1 THEN other_user.student_fname
         ELSE sender_user.student_fname
       END AS other_user_fname,
       CASE
-        WHEN c.user1_id = $1 THEN other_user.student_lname
+        WHEN lm.user1_id = $1 THEN other_user.student_lname
         ELSE sender_user.student_lname
       END AS other_user_lname,
       CASE
-        WHEN c.user1_id = $1 THEN other_user.student_id
+        WHEN lm.user1_id = $1 THEN other_user.student_id
         ELSE sender_user.student_id
       END AS other_user_id
     FROM LastMessage lm
     LEFT JOIN students sender_user ON lm.sender_id = sender_user.student_id
     LEFT JOIN students other_user ON (
-      (c.user1_id = $1 AND c.user2_id = other_user.student_id) OR
-      (c.user2_id = $1 AND c.user1_id = other_user.student_id)
-    )    
+      (lm.user1_id = $1 AND lm.user2_id = other_user.student_id) OR
+      (lm.user2_id = $1 AND lm.user1_id = other_user.student_id)
+    )        
 `;
 
     // Execute the SQL query with the search criteria
