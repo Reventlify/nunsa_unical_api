@@ -136,12 +136,10 @@ exports.getConversations = async (req, res) => {
     FROM
       RankedMessages rm
       LEFT JOIN students sender_user ON rm.sender_id = sender_user.student_id
-      LEFT JOIN students other_user ON (
-        (rm.user1 = $1 AND rm.sender_id = rm.user2) OR
-        (rm.user2 = $1 AND rm.sender_id = rm.user1)
-      )
+      LEFT JOIN students other_user ON (rm.user1 = other_user.student_id OR rm.user2 = other_user.student_id)
     WHERE
-      rm.row_num = 1  
+      rm.row_num = 1
+      
 `;
 
     // Execute the SQL query with the search criteria
