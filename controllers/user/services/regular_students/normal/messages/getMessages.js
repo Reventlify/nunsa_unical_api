@@ -38,53 +38,6 @@ exports.getMessages = async (req, res) => {
 
     // Define the SQL query to get conversation
     const query = `
-      SELECT 
-      messages.message_id,
-      messages.conversation_id,
-      messages.sender_id,
-      messages.message_text,
-      messages.message_media,
-      messages.sent_at
-      FROM messages
-      LEFT JOIN conversations
-      ON
-      messages.conversation_id = conversations.conversation_id
-      WHERE 
-      conversations.user1_id = $1 AND conversations.user2_id = $2 
-      OR 
-      conversations.user1_id = $2 AND conversations.user2_id = $1
-      GROUP BY
-      messages.message_id,
-      messages.conversation_id,
-      messages.sender_id,
-      messages.message_text,
-      messages.message_media,
-      messages.sent_at
-      ORDER BY (messages.sent_at) ASC
-          `;
-
-    // Execute the SQL query with the search criteria
-    const { rows } = await pool.query(query, [sender, receiver]);
-
-    // if (rows.length === 0) {
-    //   return res.status(404).json("No messages in this chat");
-    // }
-
-    return res.status(200).json({
-      msg: rows,
-      partner: participant.rows[0],
-    });
-  } catch (error) {
-    console.error("Error executing database query:", error);
-    return res.status(500).json("Something went wrong");
-  }
-};
-
-exports.getConversations = async (req, res) => {
-  try {
-    const user = req.user;
-    // Define the SQL query to get conversation
-    const query = `
     WITH RankedMessages AS (
       SELECT
         m.conversation_id,
@@ -122,15 +75,23 @@ exports.getConversations = async (req, res) => {
         ELSE sender_user.student_lname
       END AS other_user_lname,
       CASE
-        WHEN rm.sender_id = $1 THEN rm.user2  -- Use the correct column name
-        ELSE rm.user1  -- Use the correct column name
+        WHEN rm.sender_id = $1 THEN
+          CASE
+            WHEN rm.user1 = $1 THEN rm.user2
+            ELSE rm.user1
+          END
+        ELSE
+          CASE
+            WHEN rm.user1 = $1 THEN rm.user1
+            ELSE rm.user2
+          END
       END AS other_user_id
     FROM
       RankedMessages rm
       LEFT JOIN students sender_user ON rm.sender_id = sender_user.student_id
       LEFT JOIN students other_user ON (rm.user1 = other_user.student_id OR rm.user2 = other_user.student_id)
     WHERE
-      rm.row_num = 1;    
+      rm.row_num = 1
 `;
 
     // Execute the SQL query with the search criteria
