@@ -295,3 +295,48 @@ GROUP BY students.student_id,
   materials.uploadstatus,
   materials.uploadedat
 ORDER BY (materials.uploadedat) DESC;
+
+WITH LastMessage AS (
+  SELECT DISTINCT ON (c.conversation_id)
+    c.conversation_id,
+    m.sender_id,
+    m.message_text,
+    m.message_media,
+    m.message_media_id,
+    m.delete_message,
+    m.seen,
+    m.sent_at,
+    c.user1_id,
+    c.user2_id
+  FROM conversations c
+  LEFT JOIN messages m ON c.conversation_id = m.conversation_id
+  WHERE c.user1_id = '5893913749' OR c.user2_id = '5893913749'
+  ORDER BY c.conversation_id, m.sent_at DESC
+)
+SELECT
+  lm.conversation_id,
+  lm.message_text,
+  lm.message_media,
+  lm.message_media_id,
+  lm.delete_message,
+  lm.seen,
+  lm.sent_at,
+  CASE
+    WHEN lm.user1_id = '5893913749' THEN other_user.student_fname
+    ELSE sender_user.student_fname
+  END AS other_user_fname,
+  CASE
+    WHEN lm.user1_id = '5893913749' THEN other_user.student_lname
+    ELSE sender_user.student_lname
+  END AS other_user_lname,
+  CASE
+    WHEN lm.user1_id = '5893913749' THEN other_user.student_id
+    ELSE sender_user.student_id
+  END AS other_user_id
+FROM LastMessage lm
+LEFT JOIN students sender_user ON lm.sender_id = sender_user.student_id
+LEFT JOIN students other_user ON (
+  (lm.user1_id = '5893913749' AND lm.user2_id = other_user.student_id) OR
+  (lm.user2_id = '5893913749' AND lm.user1_id = other_user.student_id)
+)  
+
