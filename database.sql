@@ -13,7 +13,8 @@ CREATE TABLE studentslimbo (
   code TEXT,
   client_status TEXT NOT NULL,
   createdat TIMESTAMP NOT NULL
-) CREATE TABLE students (
+) 
+CREATE TABLE students (
   student_id TEXT NOT NULL UNIQUE,
   sch_session_id TEXT NOT NULL REFERENCES sch_sessions(sch_session_id) ON DELETE CASCADE ON UPDATE CASCADE,
   student_email TEXT NOT NULL UNIQUE,
