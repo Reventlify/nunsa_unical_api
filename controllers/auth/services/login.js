@@ -14,6 +14,7 @@ exports.logger = async (req, res) => {
       SELECT 
       sch_sessions.sch_session,
       students.student_email,
+      students.student_photo,
       students.student_role,
       students.student_fname,
       students.student_mname,
@@ -29,6 +30,7 @@ exports.logger = async (req, res) => {
       GROUP BY 
       sch_sessions.sch_session,
       students.student_email,
+      students.student_photo,
       students.student_role,
       students.student_fname,
       students.student_mname,
@@ -57,6 +59,7 @@ exports.logger = async (req, res) => {
     const user_mname = users.rows[0].student_mname;
     const user_lname = users.rows[0].student_lname;
     const user_id = users.rows[0].student_id;
+    const photo = users.rows[0].student_photo;
     const user_role = users.rows[0].student_role;
     const user_permissions =
       // permissions for normal members
@@ -136,6 +139,7 @@ exports.logger = async (req, res) => {
         user_mname,
         user_lname,
         user_role,
+        photo,
         level,
         user_permissions,
       },

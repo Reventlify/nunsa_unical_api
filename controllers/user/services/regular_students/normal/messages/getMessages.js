@@ -122,18 +122,15 @@ exports.getConversations = async (req, res) => {
         ELSE sender_user.student_lname
       END AS other_user_lname,
       CASE
-        WHEN rm.sender_id = $1 THEN other_user.student_id
-        ELSE sender_user.student_id
+        WHEN rm.sender_id = $1 THEN rm.user2  -- Use the correct column name
+        ELSE rm.user1  -- Use the correct column name
       END AS other_user_id
     FROM
       RankedMessages rm
       LEFT JOIN students sender_user ON rm.sender_id = sender_user.student_id
       LEFT JOIN students other_user ON (rm.user1 = other_user.student_id OR rm.user2 = other_user.student_id)
     WHERE
-      rm.row_num = 1
-    
-    
-    
+      rm.row_num = 1;    
 `;
 
     // Execute the SQL query with the search criteria

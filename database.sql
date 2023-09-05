@@ -57,7 +57,8 @@ CREATE TABLE materials (
   lecturer TEXT NOT NULL,
   uploadstatus TEXT NOT NULL,
   uploadedat TIMESTAMP NOT NULL
-) CREATE TABLE conversations (
+) 
+CREATE TABLE conversations (
   conversation_id TEXT NOT NULL UNIQUE,
   user1_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
   user2_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE
