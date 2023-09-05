@@ -70,6 +70,7 @@ router.get("/get_conversations", authenticateToken, user.getConversations);
 /* Post APIs begins */
 router.post("/postupload", authenticateToken, user.postUpload);
 router.get("/getposts/:session", authenticateToken, user.getPosts);
+router.post("/posts/:postId/comment", authenticateToken, user.comment);
 /* Post APIs ends */
 
 /* Election APIs begins */

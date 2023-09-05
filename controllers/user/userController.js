@@ -20,11 +20,14 @@ const {
   getConversations,
 } = require("./services/regular_students/normal/messages/getMessages");
 const {
+  comment,
+} = require("./services/regular_students/normal/posts/comment/make_comment/comment");
+const {
   postQuery,
-} = require("./services/regular_students/normal/postUpload/postQuery");
+} = require("./services/regular_students/normal/posts/postUpload/postQuery");
 const {
   postUpload,
-} = require("./services/regular_students/normal/postUpload/postUpload");
+} = require("./services/regular_students/normal/posts/postUpload/postUpload");
 const {
   searchForStudents,
 } = require("./services/regular_students/normal/searchFor/searchForStudents/searchForStudents");
@@ -74,6 +77,7 @@ exports.getConversations = getConversations;
 /* Post services begins */
 exports.postUpload = postUpload;
 exports.getPosts = postQuery;
+exports.comment = comment;
 /* Post services ends */
 
 /* Election services begins */

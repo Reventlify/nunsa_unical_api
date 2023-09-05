@@ -1,8 +1,8 @@
 // const nodemailer = require("nodemailer");
-const pool = require("../../../../../../db");
-const { postID } = require("../../../../../../utilities/IDGenerator");
-const cloudinary = require("../../../../../../utilities/cloudinary");
-const { sizeChecker } = require("../../../../../../utilities/sizeChecker");
+const pool = require("../../../../../../../db");
+const { postID } = require("../../../../../../../utilities/IDGenerator");
+const cloudinary = require("../../../../../../../utilities/cloudinary");
+const { sizeChecker } = require("../../../../../../../utilities/sizeChecker");
 
 exports.postUpload = async (req, res) => {
   const { postText, img, schSession } = req.body;
