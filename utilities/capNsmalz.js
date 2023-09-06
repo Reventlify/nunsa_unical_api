@@ -1,4 +1,9 @@
 const pool = require("../db");
+const {
+  postCommentsID,
+  postLikesID,
+  postDislikesID,
+} = require("./IDGenerator");
 
 exports.neat = function (yourName) {
   let firstChar = yourName.slice(0, 1);
@@ -66,5 +71,89 @@ exports.materialNameHandler = async (name, session_id) => {
     }
   } catch (error) {
     console.log(error);
+  }
+};
+
+exports.postActionHandler = async (action, postID, userID, comment) => {
+  try {
+    if (action.toLowerCase() === "comment") {
+      // Insert the comment
+      const insertCommentQuery = {
+        text: `
+      INSERT INTO post_comments (comment_id, student_id, post_id, comment_text, comment_date)
+      VALUES ($1, $2, $3, $4, NOW())
+    `,
+        values: [await postCommentsID(), userID, postID, comment],
+      };
+
+      // Execute the INSERT query
+      await pool.query(insertCommentQuery);
+      return "done";
+    } else if (action.toLowerCase() === "like") {
+      // Insert the comment
+      const likePostQuery = `
+        DO $$ 
+        BEGIN 
+          -- Check if the student exists in post_dislikes
+          IF EXISTS (SELECT 1 FROM post_dislikes WHERE student_id = '${userID}' AND post_id = '${postID}') THEN
+            -- Student exists in post_dislikes, delete the student
+            DELETE FROM post_dislikes WHERE student_id = '${userID}' AND post_id = '${postID}';
+            RAISE NOTICE 'Student deleted from post_dislikes';
+          END IF;
+        
+          -- Check if the student exists in post_likes
+          IF EXISTS (SELECT 1 FROM post_likes WHERE student_id = '${userID}' AND post_id = '${postID}') THEN
+          -- Student exists in post_likes, delete the student
+          DELETE FROM post_likes WHERE student_id = '${userID}' AND post_id = '${postID}';
+            RAISE NOTICE 'Student exists in post_likes';
+          ELSE
+            -- Student does not exist in post_likes, insert the student
+            INSERT INTO post_likes (like_id, student_id, post_id, like_date)
+            VALUES ('${await postLikesID()}', '${userID}', '${postID}', NOW());
+            RAISE NOTICE 'Student inserted into post_likes';
+          END IF;
+        END $$;      
+    `;
+
+      // Execute the INSERT query
+      await pool.query(likePostQuery);
+      return "done";
+    } else if (action.toLowerCase() === "dislike") {
+      // Insert the comment
+      const disLikePostQuery = `
+        DO $$ 
+        BEGIN 
+          -- Check if the student exists in post_likes
+          IF EXISTS (SELECT 1 FROM post_likes WHERE student_id = '${userID}' AND post_id = '${postID}') THEN
+            -- Student exists in post_likes, delete the student
+            DELETE FROM post_likes WHERE student_id = '${userID}' AND post_id = '${postID}';
+            RAISE NOTICE 'Student deleted from post_likes';
+          END IF;
+        
+          -- Check if the student exists in post_dislikes
+          IF EXISTS (SELECT 1 FROM post_dislikes WHERE student_id = '${userID}' AND post_id = '${postID}') THEN
+          -- Student exists in post_dislikes, delete the student
+          DELETE FROM post_dislikes WHERE student_id = '${userID}' AND post_id = '${postID}';
+            RAISE NOTICE 'Student exists in post_dislikes';
+          ELSE
+            -- Student does not exist in post_dislikes, insert the student
+            INSERT INTO post_dislikes (dislike_id, student_id, post_id, dislike_date)
+            VALUES ('${await postDislikesID()}', '${userID}', '${postID}', NOW());
+            RAISE NOTICE 'Student inserted into post_dislikes';
+          END IF;
+        END $$;
+    `;
+
+      // Execute the INSERT query
+      await pool.query(disLikePostQuery);
+      return "done";
+    } else {
+      return console.log(`
+      postActionHandler error: Action not recognized, 
+      postActionHandler only accepts - comment, like, dislike actions.
+      `);
+    }
+  } catch (error) {
+    return console.log(error);
   }
 };
