@@ -71,6 +71,7 @@ router.get("/get_conversations", authenticateToken, user.getConversations);
 router.post("/postupload", authenticateToken, user.postUpload);
 router.get("/getposts/:session", authenticateToken, user.getPosts);
 router.post("/posts/:postId/comment", authenticateToken, user.comment);
+router.get("/posts/:postId/comment", authenticateToken, user.queryComments);
 /* Post APIs ends */
 
 /* Election APIs begins */
