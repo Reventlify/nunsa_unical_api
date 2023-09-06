@@ -2,9 +2,7 @@ const pool = require("../../../../../../../../db");
 
 exports.queryComments = async (req, res) => {
   const student_id = req.user;
-  const {postId} = req.params;
-  console.log(student_id);
-  console.log(postId);
+  const { postId } = req.params;
   try {
     const query = `
     SELECT
@@ -41,7 +39,6 @@ exports.queryComments = async (req, res) => {
     `;
 
     const { rows } = await pool.query(query, [postId, student_id]);
-    console.log(rows);
     return res.status(200).json(rows);
   } catch (error) {
     console.error(error);
