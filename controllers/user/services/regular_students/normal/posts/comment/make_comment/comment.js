@@ -8,9 +8,6 @@ exports.comment = async (req, res) => {
     const user = req.user;
     const { postId } = req.params;
     const { studentOpinion, action } = req.body;
-    console.log(postId);
-    console.log(studentOpinion);
-
     await postActionHandler(action, postId, user, studentOpinion);
 
     // Now, retrieve the post details along with comment information
