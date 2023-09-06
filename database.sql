@@ -13,8 +13,7 @@ CREATE TABLE studentslimbo (
   code TEXT,
   client_status TEXT NOT NULL,
   createdat TIMESTAMP NOT NULL
-) 
-CREATE TABLE students (
+) CREATE TABLE students (
   student_id TEXT NOT NULL UNIQUE,
   sch_session_id TEXT NOT NULL REFERENCES sch_sessions(sch_session_id) ON DELETE CASCADE ON UPDATE CASCADE,
   student_email TEXT NOT NULL UNIQUE,
@@ -58,8 +57,7 @@ CREATE TABLE materials (
   lecturer TEXT NOT NULL,
   uploadstatus TEXT NOT NULL,
   uploadedat TIMESTAMP NOT NULL
-) 
-CREATE TABLE conversations (
+) CREATE TABLE conversations (
   conversation_id TEXT NOT NULL UNIQUE,
   user1_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
   user2_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -105,8 +103,7 @@ CREATE TABLE post_comments (
   student_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
   post_id TEXT NOT NULL REFERENCES posts(post_id) ON DELETE CASCADE ON UPDATE CASCADE,
   comment_text TEXT NOT NULL,
-  comment_date TIMESTAMP NOT NULL
-  -- Add other comment-related fields
+  comment_date TIMESTAMP NOT NULL -- Add other comment-related fields
 );
 -- Create a table to store likes on comments
 CREATE TABLE comment_likes (
@@ -128,8 +125,7 @@ CREATE TABLE comment_replies (
   student_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
   comment_id TEXT NOT NULL REFERENCES post_comments(comment_id) ON DELETE CASCADE ON UPDATE CASCADE,
   reply_text TEXT NOT NULL,
-  reply_date TIMESTAMP NOT NULL
-  -- Add other reply-related fields
+  reply_date TIMESTAMP NOT NULL -- Add other reply-related fields
 );
 -- Create a table to store likes on comment replies
 CREATE TABLE reply_likes (
@@ -145,25 +141,85 @@ CREATE TABLE reply_dislikes (
   reply_id TEXT NOT NULL REFERENCES comment_replies(reply_id) ON DELETE CASCADE ON UPDATE CASCADE,
   dislike_date TIMESTAMP NOT NULL
 );
--- 
-WITH RankedMessages AS (
-  SELECT m.conversation_id,
-    m.sender_id,
-    m.message_text,
-    m.message_media,
-    m.message_media_id,
-    m.delete_message,
-    m.seen,
-    m.sent_at,
-    ROW_NUMBER() OVER (
-      PARTITION BY m.conversation_id
-      ORDER BY m.sent_at DESC
-    ) AS row_num
-  FROM messages m
-    INNER JOIN conversations c ON m.conversation_id = c.conversation_id
-  WHERE c.user1_id = '26363'
-    OR c.user2_id = '26363'
+
+WITH PostStats AS (
+  SELECT
+    p.post_id,
+    p.post_text,
+    p.post_media,
+    p.post_date,
+    s.student_fname || ' ' || s.student_lname AS student_name,
+    COALESCE(l.like_count, 0) AS like_count,
+    COALESCE(d.dislike_count, 0) AS dislike_count,
+    COALESCE(c.comment_count, 0) AS comment_count,
+    CASE
+      WHEN pl.student_id IS NOT NULL THEN 'yes'
+      ELSE 'no'
+    END AS liked,
+    CASE
+      WHEN pd.student_id IS NOT NULL THEN 'yes'
+      ELSE 'no'
+    END AS disliked,
+    CASE
+      WHEN pc.student_id IS NOT NULL THEN 'yes'
+      ELSE 'no'
+    END AS commented
+  FROM
+    posts p
+    INNER JOIN students s ON p.student_id = s.student_id
+    LEFT JOIN (
+      SELECT post_id, COUNT(*) AS like_count
+      FROM post_likes
+      GROUP BY post_id
+    ) l ON p.post_id = l.post_id
+    LEFT JOIN (
+      SELECT post_id, COUNT(*) AS dislike_count
+      FROM post_dislikes
+      GROUP BY post_id
+    ) d ON p.post_id = d.post_id
+    LEFT JOIN (
+      SELECT post_id, COUNT(*) AS comment_count
+      FROM post_comments
+      GROUP BY post_id
+    ) c ON p.post_id = c.post_id
+    LEFT JOIN post_likes pl ON p.post_id = pl.post_id AND pl.student_id = '3301920602'
+    LEFT JOIN post_dislikes pd ON p.post_id = pd.post_id AND pd.student_id = '3301920602'
+    LEFT JOIN post_comments pc ON p.post_id = pc.post_id AND pc.student_id = '3301920602'
+  WHERE
+    p.post_id = 'zb6S8Lbpsa0rOrUT'
+  ORDER BY
+    p.post_date DESC
 )
+
+
+-- Now, you can use the PostStats CTE in subsequent queries
+SELECT
+  post_id,
+  post_text,
+  post_media,
+  post_date,
+  student_name,
+  like_count,
+  dislike_count,
+  comment_count,
+  liked,
+  disliked,
+  commented
+FROM
+  PostStats;
+
+SELECT post_id,
+  post_text,
+  post_media,
+  post_date,
+  student_name,
+  like_count,
+  dislike_count,
+  comment_count,
+  liked,
+  disliked,
+  commented
+FROM PostStats
 SELECT rm.conversation_id,
   rm.sender_id,
   rm.message_text,
@@ -295,10 +351,8 @@ GROUP BY students.student_id,
   materials.uploadstatus,
   materials.uploadedat
 ORDER BY (materials.uploadedat) DESC;
-
 WITH LastMessage AS (
-  SELECT DISTINCT ON (c.conversation_id)
-    c.conversation_id,
+  SELECT DISTINCT ON (c.conversation_id) c.conversation_id,
     m.sender_id,
     m.message_text,
     m.message_media,
@@ -309,12 +363,13 @@ WITH LastMessage AS (
     c.user1_id,
     c.user2_id
   FROM conversations c
-  LEFT JOIN messages m ON c.conversation_id = m.conversation_id
-  WHERE c.user1_id = '5893913749' OR c.user2_id = '5893913749'
-  ORDER BY c.conversation_id, m.sent_at DESC
+    LEFT JOIN messages m ON c.conversation_id = m.conversation_id
+  WHERE c.user1_id = '5893913749'
+    OR c.user2_id = '5893913749'
+  ORDER BY c.conversation_id,
+    m.sent_at DESC
 )
-SELECT
-  lm.conversation_id,
+SELECT lm.conversation_id,
   lm.message_text,
   lm.message_media,
   lm.message_media_id,
@@ -334,9 +389,14 @@ SELECT
     ELSE sender_user.student_id
   END AS other_user_id
 FROM LastMessage lm
-LEFT JOIN students sender_user ON lm.sender_id = sender_user.student_id
-LEFT JOIN students other_user ON (
-  (lm.user1_id = '5893913749' AND lm.user2_id = other_user.student_id) OR
-  (lm.user2_id = '5893913749' AND lm.user1_id = other_user.student_id)
-)  
-
+  LEFT JOIN students sender_user ON lm.sender_id = sender_user.student_id
+  LEFT JOIN students other_user ON (
+    (
+      lm.user1_id = '5893913749'
+      AND lm.user2_id = other_user.student_id
+    )
+    OR (
+      lm.user2_id = '5893913749'
+      AND lm.user1_id = other_user.student_id
+    )
+  )
