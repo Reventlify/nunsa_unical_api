@@ -72,6 +72,11 @@ router.post("/postupload", authenticateToken, user.postUpload);
 router.get("/getposts/:session", authenticateToken, user.getPosts);
 router.post("/posts/:postId/comment", authenticateToken, user.comment);
 router.get("/posts/:postId/comment", authenticateToken, user.queryComments);
+router.post(
+  "/posts/:postId/comment/:comment_action",
+  authenticateToken,
+  user.commentAction
+);
 /* Post APIs ends */
 
 /* Election APIs begins */

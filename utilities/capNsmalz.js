@@ -3,6 +3,8 @@ const {
   postCommentsID,
   postLikesID,
   postDislikesID,
+  postCommentDislikesID,
+  postCommentLikesID,
 } = require("./IDGenerator");
 
 exports.neat = function (yourName) {
@@ -147,10 +149,100 @@ exports.postActionHandler = async (action, postID, userID, comment) => {
       // Execute the INSERT query
       await pool.query(disLikePostQuery);
       return "done";
+    } else if (action.toLowerCase() === "like_comment") {
+      const likeCommentQuery = `
+  DO $$ 
+  BEGIN 
+    -- Check if the student exists in comment_dislikes
+    IF EXISTS (SELECT 1 FROM comment_dislikes WHERE student_id = '${userID}' AND comment_id = '${commentID}') THEN
+      -- Student exists in comment_dislikes, delete the student
+      DELETE FROM comment_dislikes WHERE student_id = '${userID}' AND comment_id = '${commentID}';
+      RAISE NOTICE 'Student deleted from comment_dislikes';
+    END IF;
+
+    -- Check if the student exists in comment_likes
+    IF EXISTS (SELECT 1 FROM comment_likes WHERE student_id = '${userID}' AND comment_id = '${commentID}') THEN
+      -- Student exists in comment_likes, delete the student
+      DELETE FROM comment_likes WHERE student_id = '${userID}' AND comment_id = '${commentID}';
+      RAISE NOTICE 'Student deleted from comment_likes';
+    ELSE
+      -- Student does not exist in comment_likes, insert the student
+      INSERT INTO comment_likes (like_id, student_id, comment_id, like_date)
+      VALUES ('${await commentLikesID()}', '${userID}', '${commentID}', NOW());
+      RAISE NOTICE 'Student inserted into comment_likes';
+    END IF;
+  END $$;      
+`;
     } else {
       return console.log(`
       postActionHandler error: Action not recognized, 
       postActionHandler only accepts - comment, like, dislike actions.
+      `);
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};
+exports.commentActionHandler = async (action, userID, commentID) => {
+  try {
+    if (action.toLowerCase() === "like_comment") {
+      const likeCommentQuery = `
+  DO $$ 
+  BEGIN 
+    -- Check if the student exists in comment_dislikes
+    IF EXISTS (SELECT 1 FROM comment_dislikes WHERE student_id = '${userID}' AND comment_id = '${commentID}') THEN
+      -- Student exists in comment_dislikes, delete the student
+      DELETE FROM comment_dislikes WHERE student_id = '${userID}' AND comment_id = '${commentID}';
+      RAISE NOTICE 'Student deleted from comment_dislikes';
+    END IF;
+
+    -- Check if the student exists in comment_likes
+    IF EXISTS (SELECT 1 FROM comment_likes WHERE student_id = '${userID}' AND comment_id = '${commentID}') THEN
+      -- Student exists in comment_likes, delete the student
+      DELETE FROM comment_likes WHERE student_id = '${userID}' AND comment_id = '${commentID}';
+      RAISE NOTICE 'Student deleted from comment_likes';
+    ELSE
+      -- Student does not exist in comment_likes, insert the student
+      INSERT INTO comment_likes (like_id, student_id, comment_id, like_date)
+      VALUES ('${await postCommentLikesID()}', '${userID}', '${commentID}', NOW());
+      RAISE NOTICE 'Student inserted into comment_likes';
+    END IF;
+  END $$;      
+`;
+      // Execute the INSERT query
+      await pool.query(likeCommentQuery);
+      return "done";
+    } else if (action.toLowerCase() === "dislike_comment") {
+      const disLikeCommentQuery = `
+  DO $$ 
+  BEGIN 
+    -- Check if the student exists in comment_likes
+    IF EXISTS (SELECT 1 FROM comment_likes WHERE student_id = '${userID}' AND comment_id = '${commentID}') THEN
+      -- Student exists in comment_likes, delete the student
+      DELETE FROM comment_likes WHERE student_id = '${userID}' AND comment_id = '${commentID}';
+      RAISE NOTICE 'Student deleted from comment_likes';
+    END IF;
+
+    -- Check if the student exists in comment_dislikes
+    IF EXISTS (SELECT 1 FROM comment_dislikes WHERE student_id = '${userID}' AND comment_id = '${commentID}') THEN
+      -- Student exists in comment_dislikes, delete the student
+      DELETE FROM comment_dislikes WHERE student_id = '${userID}' AND comment_id = '${commentID}';
+      RAISE NOTICE 'Student deleted from comment_dislikes';
+    ELSE
+      -- Student does not exist in comment_dislikes, insert the student
+      INSERT INTO comment_dislikes (dislike_id, student_id, comment_id, dislike_date)
+      VALUES ('${await postCommentDislikesID()}', '${userID}', '${commentID}', NOW());
+      RAISE NOTICE 'Student inserted into comment_dislikes';
+    END IF;
+  END $$;      
+`;
+      // Execute the INSERT query
+      await pool.query(disLikeCommentQuery);
+      return "done";
+    } else {
+      return console.log(`
+      commentActionHandler error: Action not recognized, 
+      commentActionHandler only accepts - like_comment, dislike_comment actions.
       `);
     }
   } catch (error) {

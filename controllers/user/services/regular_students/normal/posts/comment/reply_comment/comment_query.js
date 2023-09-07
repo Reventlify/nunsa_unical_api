@@ -34,7 +34,7 @@ exports.queryComments = async (req, res) => {
     GROUP BY
     pc.comment_id, pc.comment_text, pc.comment_date, pc.student_id, s.student_photo, s.student_fname, s.student_lname
     ORDER BY
-    pc.comment_date ASC;
+    pc.comment_date DESC;
 
     `;
 

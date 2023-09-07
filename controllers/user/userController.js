@@ -20,6 +20,9 @@ const {
   getConversations,
 } = require("./services/regular_students/normal/messages/getMessages");
 const {
+  commentAction,
+} = require("./services/regular_students/normal/posts/comment/commentAction/commentAction");
+const {
   comment,
 } = require("./services/regular_students/normal/posts/comment/make_comment/comment");
 const {
@@ -82,6 +85,7 @@ exports.postUpload = postUpload;
 exports.getPosts = postQuery;
 exports.comment = comment;
 exports.queryComments = queryComments;
+exports.commentAction = commentAction;
 /* Post services ends */
 
 /* Election services begins */
