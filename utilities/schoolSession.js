@@ -220,15 +220,15 @@ exports.levelDeterminant = async (session) => {
     `);
 
     if (sessionGotten === activeSessions.rows[0].sch_session) {
-      return "500";
+      return "100";
     } else if (sessionGotten === activeSessions.rows[1].sch_session) {
-      return "400";
+      return "200";
     } else if (sessionGotten === activeSessions.rows[2].sch_session) {
       return "300";
     } else if (sessionGotten === activeSessions.rows[3].sch_session) {
-      return "200";
+      return "400";
     } else {
-      return "100";
+      return "500";
     }
   } catch (error) {
     return console.log(error);
