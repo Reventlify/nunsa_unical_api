@@ -79,6 +79,10 @@ router.post(
 );
 /* Post APIs ends */
 
+/* Dues services begins */
+router.get("/exco/get_students", authenticateToken, user.viewStudent);
+/* Dues services ends */
+
 /* Election APIs begins */
 /* Election APIs ends */
 

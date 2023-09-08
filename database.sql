@@ -38,6 +38,12 @@ CREATE TABLE studentslimbo (
   createdat TIMESTAMP NOT NULL,
   lastseenat TIMESTAMP
 );
+CREATE TABLE dues (
+  sch_session_id TEXT NOT NULL REFERENCES sch_sessions(sch_session_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  student_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  cleared_by TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  status TEXT NOT NULL
+);
 CREATE TABLE excos (
   sch_session_id TEXT NOT NULL REFERENCES sch_sessions(sch_session_id) ON DELETE CASCADE ON UPDATE CASCADE,
   exco_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -141,10 +147,8 @@ CREATE TABLE reply_dislikes (
   reply_id TEXT NOT NULL REFERENCES comment_replies(reply_id) ON DELETE CASCADE ON UPDATE CASCADE,
   dislike_date TIMESTAMP NOT NULL
 );
-
 WITH PostStats AS (
-  SELECT
-    p.post_id,
+  SELECT p.post_id,
     p.post_text,
     p.post_media,
     p.post_date,
@@ -164,37 +168,36 @@ WITH PostStats AS (
       WHEN pc.student_id IS NOT NULL THEN 'yes'
       ELSE 'no'
     END AS commented
-  FROM
-    posts p
+  FROM posts p
     INNER JOIN students s ON p.student_id = s.student_id
     LEFT JOIN (
-      SELECT post_id, COUNT(*) AS like_count
+      SELECT post_id,
+        COUNT(*) AS like_count
       FROM post_likes
       GROUP BY post_id
     ) l ON p.post_id = l.post_id
     LEFT JOIN (
-      SELECT post_id, COUNT(*) AS dislike_count
+      SELECT post_id,
+        COUNT(*) AS dislike_count
       FROM post_dislikes
       GROUP BY post_id
     ) d ON p.post_id = d.post_id
     LEFT JOIN (
-      SELECT post_id, COUNT(*) AS comment_count
+      SELECT post_id,
+        COUNT(*) AS comment_count
       FROM post_comments
       GROUP BY post_id
     ) c ON p.post_id = c.post_id
-    LEFT JOIN post_likes pl ON p.post_id = pl.post_id AND pl.student_id = '3301920602'
-    LEFT JOIN post_dislikes pd ON p.post_id = pd.post_id AND pd.student_id = '3301920602'
-    LEFT JOIN post_comments pc ON p.post_id = pc.post_id AND pc.student_id = '3301920602'
-  WHERE
-    p.post_id = 'zb6S8Lbpsa0rOrUT'
-  ORDER BY
-    p.post_date DESC
-)
-
-
--- Now, you can use the PostStats CTE in subsequent queries
-SELECT
-  post_id,
+    LEFT JOIN post_likes pl ON p.post_id = pl.post_id
+    AND pl.student_id = '3301920602'
+    LEFT JOIN post_dislikes pd ON p.post_id = pd.post_id
+    AND pd.student_id = '3301920602'
+    LEFT JOIN post_comments pc ON p.post_id = pc.post_id
+    AND pc.student_id = '3301920602'
+  WHERE p.post_id = 'zb6S8Lbpsa0rOrUT'
+  ORDER BY p.post_date DESC
+) -- Now, you can use the PostStats CTE in subsequent queries
+SELECT post_id,
   post_text,
   post_media,
   post_date,
@@ -205,9 +208,7 @@ SELECT
   liked,
   disliked,
   commented
-FROM
-  PostStats;
-
+FROM PostStats;
 SELECT post_id,
   post_text,
   post_media,

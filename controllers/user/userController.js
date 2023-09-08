@@ -1,3 +1,4 @@
+const { viewStudent } = require("./services/excos/dues/viewStudent");
 const {
   approveAMaterial,
   materialNotApproved,
@@ -87,6 +88,10 @@ exports.comment = comment;
 exports.queryComments = queryComments;
 exports.commentAction = commentAction;
 /* Post services ends */
+
+/* Dues services begins */
+exports.viewStudent = viewStudent;
+/* Dues services ends */
 
 /* Election services begins */
 /* Election services ends */
