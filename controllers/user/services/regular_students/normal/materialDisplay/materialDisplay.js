@@ -8,7 +8,7 @@ exports.viewMaterialsPending = async (req, res) => {
     const { level } = req.params;
     const uploadstatus = "pending";
     const permissions = req.permissions;
-    if (permissions.approvePDF)
+    if (!permissions.approvePDF)
       return res
         .status(400)
         .json(
@@ -34,7 +34,7 @@ exports.viewMaterialsPendingForACourse = async (req, res) => {
     const course_abbr = courseParts[0];
     const course_code = courseParts[1];
     const permissions = req.permissions;
-    if (permissions.approvePDF)
+    if (!permissions.approvePDF)
       return res
         .status(400)
         .json(

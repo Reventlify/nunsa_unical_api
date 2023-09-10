@@ -212,25 +212,49 @@ exports.year_to_session_converter = async (year) => {
 exports.levelDeterminant = async (session) => {
   try {
     const sessionGotten = inputGroomer(session);
-    const activeSessions = await pool.query(`
-    SELECT sch_session_id, sch_session, createdat
-    FROM sch_sessions
-    ORDER BY LEFT(sch_session, 2) DESC
-    FETCH FIRST 5 ROW ONLY
-    `);
+    // const activeSessions = await pool.query(`
+    // SELECT sch_session_id, sch_session, createdat
+    //  FROM sch_sessions
+    //  ORDER BY LEFT(sch_session, 2) DESC
+    //  FETCH FIRST 5 ROW ONLY
+    //  `);
 
-    if (sessionGotten === activeSessions.rows[0].sch_session) {
+    if (sessionGotten === "21/22") {
       return "100";
-    } else if (sessionGotten === activeSessions.rows[1].sch_session) {
+    } else if (sessionGotten === "20/21") {
       return "200";
-    } else if (sessionGotten === activeSessions.rows[2].sch_session) {
+    } else if (sessionGotten === "19/20") {
       return "300";
-    } else if (sessionGotten === activeSessions.rows[3].sch_session) {
+    } else if (sessionGotten === "18/19") {
       return "400";
-    } else {
+    } else if (sessionGotten === "17/18") {
       return "500";
+    } else {
+      return "Alumni";
     }
   } catch (error) {
     return console.log(error);
+  }
+};
+
+exports.sessionIncrementor = (session, increment) => {
+  const core = (no, byte) => {
+    const part1 = byte.slice(0, 2);
+    const part2 = byte.slice(-2);
+
+    return `${Number(part1) + no}/${Number(part2) + no}`;
+  };
+  if (Number(increment) === 1) {
+    return session;
+  } else if (Number(increment) === 2) {
+    return core(1, session);
+  } else if (Number(increment) === 3) {
+    return core(2, session);
+  } else if (Number(increment) === 4) {
+    return core(3, session);
+  } else if (Number(increment) === 5) {
+    return core(4, session);
+  } else {
+    console.log("sessionIncrementor error: something went wrong");
   }
 };

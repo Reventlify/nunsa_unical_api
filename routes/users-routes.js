@@ -65,6 +65,13 @@ router.get("/get_conversations", authenticateToken, user.getConversations);
 /* Messaging APIs ends */
 
 /* Profile APIs begins */
+router.patch("/upload_dp", authenticateToken, user.uploadDP);
+router.get(
+  "/student_profile/:student",
+  authenticateToken,
+  user.viewStudentProfile
+);
+router.patch("/edit_about", authenticateToken, user.editAbout);
 /* Profile APIs ends */
 
 /* Post APIs begins */
@@ -81,6 +88,17 @@ router.post(
 
 /* Dues services begins */
 router.get("/exco/get_students", authenticateToken, user.viewStudent);
+router.get(
+  "/exco/get_students/:student",
+  authenticateToken,
+  user.seeThroughStudents
+);
+router.get("/exco/get_students/:student/dues", authenticateToken, user.getDues);
+router.post(
+  "/exco/clear_students/:student/dues",
+  authenticateToken,
+  user.clearDues
+);
 /* Dues services ends */
 
 /* Election APIs begins */

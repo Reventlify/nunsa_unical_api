@@ -11,7 +11,7 @@ exports.approveAMaterial = async (req, res) => {
     const { materialID, uploadstatus, session, course_abbr, course_code } =
       req.body;
     const permissions = req.permissions;
-    if (permissions.approvePDF)
+    if (!permissions.approvePDF)
       return res
         .status(400)
         .json("You are not authorized to approve materials.");
@@ -72,7 +72,7 @@ exports.materialNotApproved = async (req, res) => {
     const { materialID, uploadstatus, session, course_abbr, course_code } =
       req.body;
     const permissions = req.permissions;
-    if (permissions.approvePDF)
+    if (!permissions.approvePDF)
       return res
         .status(400)
         .json("You are not authorized to delete materials.");

@@ -1,4 +1,9 @@
-const { viewStudent } = require("./services/excos/dues/viewStudent");
+const { clearDues } = require("./services/excos/dues/clearDues");
+const { getDues } = require("./services/excos/dues/getDues");
+const {
+  viewStudent,
+  seeThroughStudents,
+} = require("./services/excos/dues/viewStudent");
 const {
   approveAMaterial,
   materialNotApproved,
@@ -35,6 +40,15 @@ const {
 const {
   postUpload,
 } = require("./services/regular_students/normal/posts/postUpload/postUpload");
+const {
+  editAbout,
+} = require("./services/regular_students/normal/profile/editAbout");
+const {
+  uploadDP,
+} = require("./services/regular_students/normal/profile/uploadDP");
+const {
+  viewStudentProfile,
+} = require("./services/regular_students/normal/profile/viewStudentProfile");
 const {
   searchForStudents,
 } = require("./services/regular_students/normal/searchFor/searchForStudents/searchForStudents");
@@ -79,6 +93,9 @@ exports.getConversations = getConversations;
 /* Messaging services ends */
 
 /* Profile services begins */
+exports.uploadDP = uploadDP;
+exports.viewStudentProfile = viewStudentProfile;
+exports.editAbout = editAbout;
 /* Profile services ends */
 
 /* Post services begins */
@@ -91,6 +108,9 @@ exports.commentAction = commentAction;
 
 /* Dues services begins */
 exports.viewStudent = viewStudent;
+exports.seeThroughStudents = seeThroughStudents;
+exports.getDues = getDues;
+exports.clearDues = clearDues;
 /* Dues services ends */
 
 /* Election services begins */

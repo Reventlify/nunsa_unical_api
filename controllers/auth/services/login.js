@@ -19,6 +19,7 @@ exports.logger = async (req, res) => {
       students.student_fname,
       students.student_mname,
       students.student_lname,
+      students.student_about,
       students.student_id,
       students.student_mat_no,
       students.student_password
@@ -35,6 +36,7 @@ exports.logger = async (req, res) => {
       students.student_fname,
       students.student_mname,
       students.student_lname,
+      students.student_about,
       students.student_id,
       students.student_mat_no,
       students.student_password;
@@ -60,6 +62,7 @@ exports.logger = async (req, res) => {
     const user_lname = users.rows[0].student_lname;
     const user_id = users.rows[0].student_id;
     const photo = users.rows[0].student_photo;
+    const about = users.rows[0].student_about;
     const user_role = users.rows[0].student_role;
     const user_permissions =
       // permissions for normal members
@@ -69,24 +72,30 @@ exports.logger = async (req, res) => {
             blockClass: false,
             blockGen: false,
             approveBlog: false,
+            viewStudents: false,
+            clearDues: false,
             approvePDF: false,
           }
         : // permissions for class rep
-        user_role === "class_rep"
+        user_role === "class rep"
         ? {
             election: false,
             blockClass: true,
             blockGen: false,
             approveBlog: false,
+            viewStudents: false,
+            clearDues: false,
             approvePDF: true,
           }
         : // permissions for the presidents
-        user_role === "pres" || user_role === "v_pres"
+        user_role === "president" || user_role === "vice president"
         ? {
             election: true,
             blockClass: true,
             blockGen: true,
             approveBlog: true,
+            viewStudents: true,
+            clearDues: false,
             approvePDF: true,
           }
         : // permissions for eleco chair
@@ -96,14 +105,29 @@ exports.logger = async (req, res) => {
             blockClass: false,
             blockGen: false,
             approveBlog: false,
+            viewStudents: true,
+            clearDues: false,
             approvePDF: false,
           }
-        : // permissions for other executives
-          {
-            election: false,
+        : // permissions for financial secretary
+        user_role === "financial secretary"
+        ? {
+            election: true,
             blockClass: true,
             blockGen: true,
             approveBlog: true,
+            viewStudents: true,
+            clearDues: true,
+            approvePDF: true,
+          }
+        : // permissions for other executives
+          {
+            election: true,
+            blockClass: true,
+            blockGen: true,
+            approveBlog: true,
+            viewStudents: true,
+            clearDues: false,
             approvePDF: true,
           };
     const token = jwt.sign(
@@ -140,6 +164,7 @@ exports.logger = async (req, res) => {
         user_lname,
         user_role,
         photo,
+        about,
         level,
         user_permissions,
       },

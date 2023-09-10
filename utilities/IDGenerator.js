@@ -341,3 +341,26 @@ exports.postCommentReplyDislikes = async () => {
     return console.log(error);
   }
 };
+// generates dues IDs
+exports.duesID = async () => {
+  // generates students ID
+  let id = randomString({
+    length: 18,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query("SELECT * FROM dues WHERE dues_id = $1", [
+      id,
+    ]);
+
+    if (checker.rows.length !== 0) {
+      return duesID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};

@@ -39,10 +39,11 @@ CREATE TABLE studentslimbo (
   lastseenat TIMESTAMP
 );
 CREATE TABLE dues (
-  sch_session_id TEXT NOT NULL REFERENCES sch_sessions(sch_session_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  dues_id Text NOT NULL UNIQUE,
+  sch_session TEXT NOT NULL REFERENCES sch_sessions(sch_session) ON DELETE CASCADE ON UPDATE CASCADE,
   student_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
   cleared_by TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
-  status TEXT NOT NULL
+  dues_status TEXT NOT NULL
 );
 CREATE TABLE excos (
   sch_session_id TEXT NOT NULL REFERENCES sch_sessions(sch_session_id) ON DELETE CASCADE ON UPDATE CASCADE,
