@@ -77,6 +77,7 @@ router.patch("/edit_about", authenticateToken, user.editAbout);
 /* Post APIs begins */
 router.post("/postupload", authenticateToken, user.postUpload);
 router.get("/getposts/:session", authenticateToken, user.getPosts);
+router.get("/searchposts/:searchTerm", authenticateToken, user.searchForPosts);
 router.post("/posts/:postId/comment", authenticateToken, user.comment);
 router.get("/posts/:postId/comment", authenticateToken, user.queryComments);
 router.post(

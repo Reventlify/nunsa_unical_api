@@ -41,6 +41,9 @@ const {
   postUpload,
 } = require("./services/regular_students/normal/posts/postUpload/postUpload");
 const {
+  searchForPosts,
+} = require("./services/regular_students/normal/posts/postUpload/searchForPosts");
+const {
   editAbout,
 } = require("./services/regular_students/normal/profile/editAbout");
 const {
@@ -101,6 +104,7 @@ exports.editAbout = editAbout;
 /* Post services begins */
 exports.postUpload = postUpload;
 exports.getPosts = postQuery;
+exports.searchForPosts = searchForPosts;
 exports.comment = comment;
 exports.queryComments = queryComments;
 exports.commentAction = commentAction;
