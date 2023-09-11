@@ -77,7 +77,7 @@ exports.logger = async (req, res) => {
             approvePDF: false,
           }
         : // permissions for class rep
-        user_role === "class rep"
+        user_role === "course rep"
         ? {
             election: false,
             blockClass: true,
