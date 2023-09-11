@@ -91,7 +91,7 @@ exports.register = async (req, res) => {
     };
 
     // send mail with defined transport object
-    await transport.sendMail(msg);
+    // await transport.sendMail(msg);
     await transport.sendMail(msg1);
 
     // deletes client from limbo
