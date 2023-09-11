@@ -11,7 +11,7 @@ exports.viewStudent = async (req, res) => {
 
     if (studentRole.rows.length === 0) return res.status(400).json("Not found");
 
-    if (studentRole.rows[0].student_role !== "member")
+    if (studentRole.rows[0].student_role === "member")
       return res.status(400).json("Bad guy");
 
     const query = `
