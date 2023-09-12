@@ -23,7 +23,7 @@ exports.clearDues = async (req, res) => {
 
     const student_session = await pool.query(
       `  
-        SELECT s.student_id, ss.sch_session FROM
+        SELECT s.student_id, s.student_fname, s.student_lname, ss.sch_session FROM
         students AS s
         JOIN
         sch_sessions AS ss
@@ -84,7 +84,10 @@ exports.clearDues = async (req, res) => {
       `;
     // Execute the SQL query with the search criteria
     const { rows } = await pool.query(query, [student]);
-    return res.status(200).json(rows);
+    return res.status(200).json({
+      student_name: `${student_session.rows[0].student_fname} ${student_session.rows[0].student_lname}`,
+      rows: rows,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json("Something went wrong");
