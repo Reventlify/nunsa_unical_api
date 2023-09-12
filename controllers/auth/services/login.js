@@ -95,7 +95,7 @@ exports.logger = async (req, res) => {
             blockGen: true,
             approveBlog: true,
             viewStudents: true,
-            clearDues: false,
+            clearDues: user_role === "president" ? true : false,
             approvePDF: true,
           }
         : // permissions for eleco chair
@@ -109,18 +109,18 @@ exports.logger = async (req, res) => {
             clearDues: false,
             approvePDF: false,
           }
-        : // permissions for financial secretary
-        user_role === "financial secretary"
-        ? {
-            election: true,
-            blockClass: true,
-            blockGen: true,
-            approveBlog: true,
-            viewStudents: true,
-            clearDues: true,
-            approvePDF: true,
-          }
-        : // permissions for other executives
+        : // : // permissions for financial secretary
+          // user_role === "financial secretary"
+          // ? {
+          //     election: true,
+          //     blockClass: true,
+          //     blockGen: true,
+          //     approveBlog: true,
+          //     viewStudents: true,
+          //     clearDues: true,
+          //     approvePDF: true,
+          //   }
+          // permissions for other executives
           {
             election: true,
             blockClass: true,

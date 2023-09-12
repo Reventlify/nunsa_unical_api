@@ -9,6 +9,10 @@ exports.getDues = async (req, res) => {
       "SELECT student_id, student_role FROM students WHERE student_id = $1",
       [user]
     );
+    const getRole = await pool.query(
+      "SELECT student_id, student_role, student_fname, student_lname FROM students WHERE student_id = $1",
+      [student]
+    );
 
     if (studentRole.rows.length === 0) return res.status(400).json("Not found");
 
@@ -43,7 +47,10 @@ exports.getDues = async (req, res) => {
       `;
     // Execute the SQL query with the search criteria
     const { rows } = await pool.query(query, [student]);
-    return res.status(200).json(rows);
+    return res.status(200).json({
+      student_name: `${getRole.rows[0].student_fname} ${getRole.rows[0].student_lname}`,
+      rows: rows,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json("Something went wrong");
