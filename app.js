@@ -139,19 +139,19 @@ io.on("connection", async (socket) => {
     // Check if the token is valid and get the expiration timestamp
     if (decodedT && decodedT.exp) {
       const expirationTimestamp = decodedT.exp;
-      console.log(
-        "Token expiration timestamp (in seconds since Unix epoch):",
-        expirationTimestamp
-      );
+      // console.log(
+      //   "Token expiration timestamp (in seconds since Unix epoch):",
+      //   expirationTimestamp
+      // );
 
       // You can convert the timestamp to a JavaScript Date object if needed
       const expirationDate = new Date(expirationTimestamp * 1000);
-      console.log("Token expiration date:", expirationDate);
+      // console.log("Token expiration date:", expirationDate);
     } else {
-      console.log('Invalid or missing "exp" claim in the JWT token.');
+      // console.log('Invalid or missing "exp" claim in the JWT token.');
     }
     // Handle token verification errors
-    console.error("Token verification error:", error);
+    // console.error("Token verification error:", error);
     socket.disconnect();
   }
 });
