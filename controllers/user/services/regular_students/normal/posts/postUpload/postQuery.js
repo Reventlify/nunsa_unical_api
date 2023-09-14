@@ -15,10 +15,10 @@ exports.postQuery = async (req, res) => {
       return null;
     }
   };
-
-  const level = await levelDeterminant(sch_session);
-  const helper = postsToGet(session);
   try {
+    const level = await levelDeterminant(sch_session);
+    const helper = postsToGet(session);
+    console.log(`helper: ${helper}, level: ${level}`);
     const query =
       level === "200"
         ? `
