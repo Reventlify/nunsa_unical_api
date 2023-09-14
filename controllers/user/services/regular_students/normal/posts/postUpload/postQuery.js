@@ -57,11 +57,17 @@ exports.postQuery = async (req, res) => {
         LEFT JOIN post_likes pl ON p.post_id = pl.post_id AND pl.student_id = $1
         LEFT JOIN post_dislikes pd ON p.post_id = pd.post_id AND pd.student_id = $1
         LEFT JOIN post_comments pc ON p.post_id = pc.post_id AND pc.student_id = $1
-        WHERE (sch_session = $3 OR sch_session = $4 AND $2 IS NOT NULL) OR (sch_session IS NULL AND $2 IS NULL)
-      ORDER BY p.post_date DESC
-      OFFSET 0
-      LIMIT 20
-    )
+        WHERE
+        (
+        (sch_session = $3 OR sch_session = $4)
+        AND ($2 IS NULL OR CHAR_LENGTH($2) > 0)
+        )
+        OR
+        (sch_session IS NULL AND $2 IS NULL)
+        ORDER BY p.post_date DESC
+        OFFSET 0
+        LIMIT 20
+        )
     SELECT
       post_id,
       post_text,
