@@ -44,7 +44,7 @@ exports.register = async (req, res) => {
         (await sessionExistence(matOrReg)).session_id,
         await idGenerator.clientID(),
         email.toLowerCase(),
-        matNo.toLowerCase(),
+        matOrReg.toLowerCase(),
         fName.toLowerCase(),
         mName.toLowerCase(),
         lName.toLowerCase(),
