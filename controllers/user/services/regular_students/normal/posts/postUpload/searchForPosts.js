@@ -2,6 +2,7 @@ const pool = require("../../../../../../../db");
 
 exports.searchForPosts = async (req, res) => {
   const { searchTerm } = req.params;
+  const user = req.user;
   try {
     const query = `
         WITH PostStats AS (
@@ -40,14 +41,14 @@ exports.searchForPosts = async (req, res) => {
             LEFT JOIN post_dislikes pd ON p.post_id = pd.post_id AND pd.student_id = $1
             LEFT JOIN post_comments pc ON p.post_id = pc.post_id AND pc.student_id = $1
             WHERE 
-            student_fname ILIKE $1 OR
-            student_lname ILIKE $1 OR
-            (student_fname || ' ' || student_mname) ILIKE $1 OR
-            (student_fname || ' ' || student_lname) ILIKE $1 OR
-            (student_lname || ' ' || student_fname) ILIKE $1 OR
-            (student_fname || ' ' || student_mname || ' ' || student_lname) ILIKE $1 OR
-            (student_lname || ' ' || student_mname || ' ' || student_fname) ILIKE $1 OR
-            student_mat_no ILIKE $1
+            student_fname ILIKE $2 OR
+            student_lname ILIKE $2 OR
+            (student_fname || ' ' || student_mname) ILIKE $2 OR
+            (student_fname || ' ' || student_lname) ILIKE $2 OR
+            (student_lname || ' ' || student_fname) ILIKE $2 OR
+            (student_fname || ' ' || student_mname || ' ' || student_lname) ILIKE $2 OR
+            (student_lname || ' ' || student_mname || ' ' || student_fname) ILIKE $2 OR
+            student_mat_no ILIKE $2
           ORDER BY p.post_date DESC
         )
         SELECT
@@ -67,7 +68,7 @@ exports.searchForPosts = async (req, res) => {
           PostStats
             `;
 
-    const { rows } = await pool.query(query, [searchTerm]);
+    const { rows } = await pool.query(query, [user, searchTerm]);
     return res.status(200).json(rows);
   } catch (error) {
     console.error(error);
