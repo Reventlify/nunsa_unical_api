@@ -20,7 +20,7 @@ exports.postQuery = async (req, res) => {
     const helper = postsToGet(session);
     console.log(`helper: ${helper}, level: ${level}`);
     const query =
-      level === "200"
+      level === "200" && helper === null
         ? `
     WITH PostStats AS (
       SELECT DISTINCT
@@ -60,7 +60,7 @@ exports.postQuery = async (req, res) => {
         WHERE
         (
         (sch_session = $3 OR sch_session = $4)
-        AND ($2 IS NULL OR CHAR_LENGTH($2) > 0)
+        AND ($2 IS NOT NULL)
         )
         OR
         (sch_session IS NULL AND $2 IS NULL)
