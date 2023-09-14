@@ -115,6 +115,7 @@ exports.getConversations = async (req, res) => {
       lm.sent_at,
       other_user.student_fname AS other_user_fname,
       other_user.student_lname AS other_user_lname,
+      other_user.student_photo AS other_user_photo,
       lm.other_user_id
     FROM LastMessage lm
     LEFT JOIN students other_user ON lm.other_user_id = other_user.student_id       
