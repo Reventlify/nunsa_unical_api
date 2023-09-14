@@ -2,17 +2,29 @@ const {
   get_materials_for_a_course,
   get_materials_for_a_level,
 } = require("../../../../../../utilities/materialQuery");
+const {
+  levelDeterminant,
+} = require("../../../../../../utilities/schoolSession");
 
 exports.viewMaterialsPending = async (req, res) => {
   try {
     const { level } = req.params;
     const uploadstatus = "pending";
+    const user_session = req.user_session;
     const permissions = req.permissions;
     if (!permissions.approvePDF)
       return res
         .status(400)
         .json(
           "You are not authorized to view materials waiting to be approved."
+        );
+    const theUserLevel = await levelDeterminant(user_session);
+
+    if (theUserLevel !== level && !permissions.viewStudents)
+      return res
+        .status(400)
+        .json(
+          `You are not authorized to view ${level} materials waiting to be approved.`
         );
     const pendingMaterials = await get_materials_for_a_level(
       uploadstatus,
