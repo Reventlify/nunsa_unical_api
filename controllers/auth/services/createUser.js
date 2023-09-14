@@ -7,7 +7,8 @@ const idGenerator = require("../../../utilities/IDGenerator");
 const { sessionExistence } = require("../../../utilities/schoolSession");
 
 exports.register = async (req, res) => {
-  const { email, password, fName, mName, lName, matNo, gender } = req.body;
+  const { email, password, fName, mName, lName, matNo, gender, regNo, year1 } =
+    req.body;
   try {
     const user = await pool.query(
       "SELECT * FROM students WHERE student_email = $1",
@@ -27,6 +28,8 @@ exports.register = async (req, res) => {
     if (userInLimbo.rows[0].client_status !== "VERIFIED")
       return res.status(409).json("User email not verified!");
 
+    const matOrReg = !year1 ? matNo : `22/${regNo.toLowerCase()}`;
+
     // hashes password
     const hashedPassword = await bcrypt.hash(password, 10);
     // registers user
@@ -38,7 +41,7 @@ exports.register = async (req, res) => {
         student_password, student_gender, createdat
         ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
       [
-        (await sessionExistence(matNo)).session_id,
+        (await sessionExistence(matOrReg)).session_id,
         await idGenerator.clientID(),
         email.toLowerCase(),
         matNo.toLowerCase(),

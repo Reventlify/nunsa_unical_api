@@ -219,8 +219,10 @@ exports.levelDeterminant = async (session) => {
     //  FETCH FIRST 5 ROW ONLY
     //  `);
 
-    if (sessionGotten === "21/22") {
+    if (sessionGotten === "22/23") {
       return "100";
+    } else if (sessionGotten === "21/22") {
+      return "200";
     } else if (sessionGotten === "20/21") {
       return "200";
     } else if (sessionGotten === "19/20") {
