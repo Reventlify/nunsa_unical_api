@@ -94,7 +94,7 @@ exports.materialUpload = async (req, res) => {
 
     const courseRep = await pool.query(
       "SELECT student_id, student_fname FROM students WHERE student_role = $1 AND sch_session_id = $2",
-      ["course_rep", sch_session_id]
+      ["course rep", sch_session_id]
     );
     // inserts material into the db
     const materialUploaded = await pool.query(
@@ -145,6 +145,20 @@ exports.materialUpload = async (req, res) => {
       },
     });
 
+    await new Promise((resolve, reject) => {
+      // verify connection configuration transport.verify(function (error, success) {
+      transport.verify(function (error, success) {
+        if (error) {
+          console.log(error);
+          return res.status(500).json("Sorry something went wrong.");
+          // reject(error);
+        } else {
+          // console.log("Server is ready to take our messages");
+          resolve(success);
+        }
+      });
+    });
+
     //Mail to uploader
     const msg = {
       from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
@@ -183,8 +197,30 @@ exports.materialUpload = async (req, res) => {
       );
 
       // send mail with defined transport object
-      await transport.sendMail(msg);
-      await transport.sendMail(msg1);
+      // await transport.sendMail(msg);
+      // await transport.sendMail(msg1);
+
+      await new Promise((resolve, reject) => {
+        transport.sendMail(msg, (err, info) => {
+          if (err) {
+            console.error(err);
+            return res.status(400).json("Email does not exist.");
+          } else {
+            resolve(info);
+          }
+        });
+      });
+
+      await new Promise((resolve, reject) => {
+        transport.sendMail(msg1, (err, info) => {
+          if (err) {
+            console.error(err);
+            return res.status(400).json("Email does not exist.");
+          } else {
+            resolve(info);
+          }
+        });
+      });
       // response
       return res.status(200).json("Upload successful!");
     } else {
@@ -201,10 +237,30 @@ exports.materialUpload = async (req, res) => {
         refinedSession
       );
       // send mail with defined transport object
-      const first = await transport.sendMail(msg);
-      // const second = await transport.sendMail(msg1);
-      console.log(`first: ${first.response.slice(0, 3)}`);
-      // console.log(`second: ${second.response}`);
+      // await transport.sendMail(msg);
+      // await transport.sendMail(msg1);
+
+      await new Promise((resolve, reject) => {
+        transport.sendMail(msg, (err, info) => {
+          if (err) {
+            console.error(err);
+            return res.status(400).json("Email does not exist.");
+          } else {
+            resolve(info);
+          }
+        });
+      });
+
+      await new Promise((resolve, reject) => {
+        transport.sendMail(msg1, (err, info) => {
+          if (err) {
+            console.error(err);
+            return res.status(400).json("Email does not exist.");
+          } else {
+            resolve(info);
+          }
+        });
+      });
       // response
       return res.status(200).json("Upload successful!");
     }
