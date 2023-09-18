@@ -45,7 +45,7 @@ exports.sendVerificationCode = async (req, res) => {
       transport.verify(function (error, success) {
         if (error) {
           console.log(error);
-          return res.status(500).json("Sorry something went wrong.");
+          reject(error);
         } else {
           // console.log("Server is ready to take our messages");
           resolve(success);
@@ -71,16 +71,8 @@ exports.sendVerificationCode = async (req, res) => {
       transport.sendMail(msg, (err, info) => {
         if (err) {
           console.error(err);
-          // reject(err);
-          return res.status(500).json("Sorry something went wrong.");
+          reject(err);
         } else {
-          if (info.response.slice(0, 3) !== "250") {
-            console.log(info.response.slice(0, 3));
-            console.log(info.response);
-            return res.status(400).json("Email does not exist.");
-          }
-          console.log(info.response.slice(0, 3));
-          console.log(info.response);
           resolve(info);
         }
       });
