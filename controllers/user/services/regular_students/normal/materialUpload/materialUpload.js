@@ -26,7 +26,6 @@ const message = (
   edit,
   session
 ) => {
-  console.log(`After: ${edit}`);
   //Mail to course rep
   return {
     from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
@@ -136,7 +135,6 @@ exports.materialUpload = async (req, res) => {
       ]
     );
     const toLink = `${process.env.URL}/student/courses/materials/review/${level_year}`;
-    console.log(`Before: ${toLink}`);
     //credentials for email transportation
     const transport = nodemailer.createTransport({
       host: "smtp.office365.com",
@@ -203,8 +201,10 @@ exports.materialUpload = async (req, res) => {
         refinedSession
       );
       // send mail with defined transport object
-      await transport.sendMail(msg);
-      await transport.sendMail(msg1);
+      const first = await transport.sendMail(msg);
+      const second = await transport.sendMail(msg1);
+      console.log(`first: ${first.response}`);
+      console.log(`second: ${second.response}`);
       // response
       return res.status(200).json("Upload successful!");
     }
