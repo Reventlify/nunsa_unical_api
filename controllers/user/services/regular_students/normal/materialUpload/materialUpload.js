@@ -202,9 +202,9 @@ exports.materialUpload = async (req, res) => {
       );
       // send mail with defined transport object
       const first = await transport.sendMail(msg);
-      const second = await transport.sendMail(msg1);
-      console.log(`first: ${first.response}`);
-      console.log(`second: ${second.response}`);
+      // const second = await transport.sendMail(msg1);
+      console.log(`first: ${first.response.slice(0, 3)}`);
+      // console.log(`second: ${second.response}`);
       // response
       return res.status(200).json("Upload successful!");
     }
