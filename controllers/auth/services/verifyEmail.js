@@ -74,11 +74,11 @@ exports.sendVerificationCode = async (req, res) => {
           console.error(err);
           return res.status(500).json("Sorry something went wrong.");
         } else {
-          if (info.rejected) {
-            console.log(`first: ${info.rejected}`);
-            return res.status(400).json("Email does not exist.");
-          }
-          console.log(`second: ${info.rejected}`);
+          // if (info.response) {
+          //   console.log(`first: ${info.rejected}`);
+          //   return res.status(400).json("Email does not exist.");
+          // }
+          console.log(`second: ${info.response}`);
           resolve(info);
         }
       });
