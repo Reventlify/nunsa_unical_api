@@ -67,18 +67,20 @@ exports.sendVerificationCode = async (req, res) => {
 
     // send mail with defined transport object
     // await transport.sendMail(msg);
-
     await new Promise((resolve, reject) => {
       transport.sendMail(msg, (err, info) => {
         if (err) {
           console.error(err);
+          // reject(err);
           return res.status(500).json("Sorry something went wrong.");
         } else {
-          // if (info.response) {
-          //   console.log(`first: ${info.rejected}`);
-          //   return res.status(400).json("Email does not exist.");
-          // }
-          console.log(`second: ${info.response}`);
+          if (info.response.slice(0, 3) !== "250") {
+            console.log(info.response.slice(0, 3));
+            console.log(info.response);
+            return res.status(400).json("Email does not exist.");
+          }
+          console.log(info.response.slice(0, 3));
+          console.log(info.response);
           resolve(info);
         }
       });
