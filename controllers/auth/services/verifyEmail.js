@@ -69,7 +69,7 @@ exports.sendVerificationCode = async (req, res) => {
     // await transport.sendMail(msg);
 
     await new Promise((resolve, reject) => {
-      transport.sendMail(msg1, (err, info) => {
+      transport.sendMail(msg, (err, info) => {
         if (err) {
           console.error(err);
           return res.status(500).json("Sorry something went wrong.");
