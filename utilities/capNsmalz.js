@@ -249,3 +249,89 @@ exports.commentActionHandler = async (action, userID, commentID) => {
     return console.log(error);
   }
 };
+
+exports.getNotifications = async (userID) => {
+  try {
+    // Define the SQL query to get conversation
+    const conversationQuery = `
+    WITH LastMessage AS (
+      SELECT DISTINCT ON (c.conversation_id)
+        c.conversation_id,
+        m.sender_id,
+        m.message_text,
+        m.message_media,
+        m.message_media_id,
+        m.delete_message,
+        m.seen,
+        m.sent_at,
+        CASE
+          WHEN c.user1_id = $1 THEN c.user2_id
+          ELSE c.user1_id
+        END AS other_user_id
+      FROM conversations c
+      LEFT JOIN messages m ON c.conversation_id = m.conversation_id
+      WHERE
+        (c.user1_id = $1 AND c.user2_id != $1) OR
+        (c.user1_id != $1 AND c.user2_id = $1)
+      ORDER BY c.conversation_id, m.sent_at DESC
+    )
+    SELECT
+      lm.conversation_id,
+      lm.sender_id,
+      lm.message_text,
+      lm.message_media,
+      lm.message_media_id,
+      lm.delete_message,
+      lm.seen,
+      lm.sent_at,
+      other_user.student_fname AS other_user_fname,
+      other_user.student_lname AS other_user_lname,
+      other_user.student_photo AS other_user_photo,
+      lm.other_user_id
+    FROM LastMessage lm
+    LEFT JOIN students other_user ON lm.other_user_id = other_user.student_id
+    `;
+
+    // Define the SQL query to get notifications
+    const notificationsQuery = `
+    WITH LastMessage AS (
+      SELECT DISTINCT ON (c.conversation_id)
+        c.conversation_id,
+        m.sender_id,
+        m.message_text,
+        m.message_media,
+        m.message_media_id,
+        m.delete_message,
+        m.seen,
+        m.sent_at,
+        CASE
+          WHEN c.user1_id = $1 THEN c.user2_id
+          ELSE c.user1_id
+        END AS other_user_id
+      FROM conversations c
+      LEFT JOIN messages m ON c.conversation_id = m.conversation_id
+      WHERE
+        (c.user1_id = $1 AND c.user2_id != $1) OR
+        (c.user1_id != $1 AND c.user2_id = $1)
+      ORDER BY c.conversation_id, m.sent_at DESC
+    )
+    SELECT *
+    FROM LastMessage lm
+    LEFT JOIN students other_user ON lm.other_user_id = other_user.student_id
+    WHERE lm.seen = 'no' AND lm.sender_id != $1
+    `;
+
+    // Execute the first SQL query to get conversation rows
+    const { rows } = await pool.query(conversationQuery, [userID]);
+
+    // Execute the second SQL query to get notifications
+    const notifications = await pool.query(notificationsQuery, [userID]);
+
+    return {
+      rows,
+      notifications: notifications.rows.length,
+    };
+  } catch (error) {
+    return console.log(error);
+  }
+};

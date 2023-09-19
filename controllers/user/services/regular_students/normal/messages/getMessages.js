@@ -1,4 +1,5 @@
 const pool = require("../../../../../../db");
+const { getNotifications } = require("../../../../../../utilities/capNsmalz");
 
 exports.getMessages = async (req, res) => {
   try {
@@ -62,13 +63,18 @@ exports.getMessages = async (req, res) => {
       messages.sent_at
       ORDER BY (messages.sent_at) ASC
           `;
-
     // Execute the SQL query with the search criteria
     const { rows } = await pool.query(query, [sender, receiver]);
 
-    // if (rows.length === 0) {
-    //   return res.status(404).json("No messages in this chat");
-    // }
+    if (rows.length !== 0) {
+      await pool.query(
+        `update messages set seen = 'yes' where seen = 'no' 
+        and conversation_id = $1
+        and sender_id != $2
+        `,
+        [rows[0].conversation_id, user]
+      );
+    }
 
     return res.status(200).json({
       msg: rows,
@@ -83,48 +89,13 @@ exports.getMessages = async (req, res) => {
 exports.getConversations = async (req, res) => {
   try {
     const user = req.user;
-    // Define the SQL query to get conversation
-    const query = `
-    WITH LastMessage AS (
-      SELECT DISTINCT ON (c.conversation_id)
-        c.conversation_id,
-        m.message_text,
-        m.message_media,
-        m.message_media_id,
-        m.delete_message,
-        m.seen,
-        m.sent_at,
-        CASE
-          WHEN c.user1_id = $1 THEN c.user2_id
-          ELSE c.user1_id
-        END AS other_user_id
-      FROM conversations c
-      LEFT JOIN messages m ON c.conversation_id = m.conversation_id
-      WHERE
-        (c.user1_id = $1 AND c.user2_id != $1) OR
-        (c.user1_id != $1 AND c.user2_id = $1)
-      ORDER BY c.conversation_id, m.sent_at DESC
-    )
-    SELECT
-      lm.conversation_id,
-      lm.message_text,
-      lm.message_media,
-      lm.message_media_id,
-      lm.delete_message,
-      lm.seen,
-      lm.sent_at,
-      other_user.student_fname AS other_user_fname,
-      other_user.student_lname AS other_user_lname,
-      other_user.student_photo AS other_user_photo,
-      lm.other_user_id
-    FROM LastMessage lm
-    LEFT JOIN students other_user ON lm.other_user_id = other_user.student_id       
-`;
 
-    // Execute the SQL query with the search criteria
-    const { rows } = await pool.query(query, [user]);
+    const details = await getNotifications(user);
 
-    return res.status(200).json(rows);
+    // Return the combined response with rows and notifications count
+    return res
+      .status(200)
+      .json({ rows: details.rows, notifications: details.notifications });
   } catch (error) {
     console.error("Error executing database query:", error);
     return res.status(500).json("Something went wrong");

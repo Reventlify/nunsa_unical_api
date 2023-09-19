@@ -2,6 +2,7 @@ const pool = require("../../../db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { levelDeterminant } = require("../../../utilities/schoolSession");
+const { getNotifications } = require("../../../utilities/capNsmalz");
 
 //login begin
 exports.logger = async (req, res) => {
@@ -64,6 +65,8 @@ exports.logger = async (req, res) => {
     const photo = users.rows[0].student_photo;
     const about = users.rows[0].student_about;
     const user_role = users.rows[0].student_role;
+
+    const notDetails = await getNotifications(user_id);
     const user_permissions =
       // permissions for normal members
       user_role === "member"
@@ -167,6 +170,8 @@ exports.logger = async (req, res) => {
         about,
         level,
         user_permissions,
+        notifications:
+          notDetails.notifications > 0 ? notDetails.notifications : null,
       },
     });
   } catch (error) {

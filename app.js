@@ -123,6 +123,7 @@ io.on("connection", async (socket) => {
             recipientSocketId.emit("receive_message", [
               messageRes.savedMessage,
             ]);
+            recipientSocketId.emit("new_message", messageRes.notifications);
           }
           socketToDisconnect.emit("receive_message", [messageRes.savedMessage]);
         }

@@ -12,12 +12,13 @@ exports.saveMessage = async (conversation_id, sender_id, msg) => {
           sender_id,
           message_text,
           delete_message,
+          seen,
           sent_at
         ) VALUES(
-          $1, $2, $3, $4, $5, CURRENT_TIMESTAMP
+          $1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP
         ) RETURNING *
       `,
-      [await messageID(), conversation_id, sender_id, msg, "no"]
+      [await messageID(), conversation_id, sender_id, msg, "no", "no"]
     );
 
     return saveMessageAction;
