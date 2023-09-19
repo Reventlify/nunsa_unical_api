@@ -11,7 +11,7 @@ exports.sendMessage = async (msg, receiver_id, sender_id) => {
       "SELECT * FROM students WHERE student_id = $1",
       [receiver_id]
     );
-    if (receiverExists.rows === 0) return "No receiver";
+    if (receiverExists.rows.length === 0) return "No receiver";
     const conversationExists = await pool.query(
       "SELECT * FROM conversations WHERE user1_id = $1 AND user2_id = $2 OR user1_id = $2 AND user2_id = $1",
       [sender_id, receiver_id]
@@ -32,6 +32,7 @@ exports.sendMessage = async (msg, receiver_id, sender_id) => {
       // on failed to save
       if (savedMessage.rows.length === 0) {
         return {
+          convo: null,
           delivered: false,
           notifications: null,
           savedMessage: null,
@@ -40,6 +41,7 @@ exports.sendMessage = async (msg, receiver_id, sender_id) => {
       const newNotification = await getNotifications(receiver_id);
       // on successful save
       return {
+        convo: savedMessage.rows[0].conversation_id,
         delivered: true,
         notifications: newNotification.notifications,
         savedMessage: savedMessage.rows[0],
@@ -54,6 +56,7 @@ exports.sendMessage = async (msg, receiver_id, sender_id) => {
     // on failed to save
     if (savedMessage.rows.length === 0) {
       return {
+        convo: null,
         delivered: false,
         notifications: null,
         savedMessage: null,
@@ -61,6 +64,7 @@ exports.sendMessage = async (msg, receiver_id, sender_id) => {
     }
     // on successful save
     return {
+      convo: savedMessage.rows[0].conversation_id,
       delivered: true,
       notifications: newNotification.notifications,
       savedMessage: savedMessage.rows[0],

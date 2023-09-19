@@ -76,8 +76,10 @@ exports.getMessages = async (req, res) => {
       );
     }
 
+    const notifications = await getNotifications(user);
     return res.status(200).json({
       msg: rows,
+      notifications: notifications.notifications,
       partner: participant.rows[0],
     });
   } catch (error) {

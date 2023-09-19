@@ -12,6 +12,9 @@ const authRoute = require("./routes/auth-routes");
 const usersRoute = require("./routes/users-routes");
 const devRoute = require("./routes/dev-routes");
 const { sendMessage } = require("./websockets/sendMessage/sendMessage");
+const {
+  markRead,
+} = require("./websockets/sendMessage/messageHelpers/markRead");
 
 const app = express();
 const whitelist = ["https://admin.socket.io", process.env.URL];
@@ -120,6 +123,7 @@ io.on("connection", async (socket) => {
           //   .to(receiver_id)
           // recipientSocketId
           if (recipientSocketId) {
+            await markRead(receiver_id, messageRes.convo);
             recipientSocketId.emit("receive_message", [
               messageRes.savedMessage,
             ]);
