@@ -290,6 +290,7 @@ exports.getNotifications = async (userID) => {
       lm.other_user_id
     FROM LastMessage lm
     LEFT JOIN students other_user ON lm.other_user_id = other_user.student_id
+    ORDER BY lm.sent_at DESC
     `;
 
     // Define the SQL query to get notifications
@@ -319,7 +320,6 @@ exports.getNotifications = async (userID) => {
     FROM LastMessage lm
     LEFT JOIN students other_user ON lm.other_user_id = other_user.student_id
     WHERE lm.seen = 'no' AND lm.sender_id != $1
-    ORDER BY lm.sent_at DESC
     `;
 
     // Execute the first SQL query to get conversation rows
