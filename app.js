@@ -123,7 +123,7 @@ io.on("connection", async (socket) => {
           //   .to(receiver_id)
           // recipientSocketId
           if (recipientSocketId) {
-            await markRead(receiver_id, messageRes.convo);
+            // await markRead(receiver_id, messageRes.convo);
             recipientSocketId.emit("receive_message", [
               messageRes.savedMessage,
             ]);
