@@ -17,7 +17,6 @@ const pool = new Pool({
   // host: "dpg-cjv3a7h5mpss7390r5l0-a.oregon-postgres.render.com",
   port: 5432,
   database: "nunsaunical",
-  // database: "reventlify",
   // ssl: true,
 });
 module.exports = pool;

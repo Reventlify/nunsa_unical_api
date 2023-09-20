@@ -57,18 +57,19 @@ exports.register = async (req, res) => {
 
     //credentials for email transportation
     const transport = nodemailer.createTransport({
-      host: "smtp.office365.com",
-      post: 587,
+      host: "eleven.qservers.net",
+      secure: true,
+      port: 465,
       auth: {
-        user: "reventlifyhub@outlook.com",
+        user: "info@nunsaunical.com.ng",
         pass: process.env.MAIL,
       },
     });
 
     //Company Reg alert
     const msg = {
-      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
-      to: "edijay17@gmail.com", // list of receivers
+      from: "NUNSA UCC <info@nunsaunical.com.ng>", // sender address
+      to: "expezra@gmail.com", // list of receivers
       subject: "Newly Registered Student", // Subject line
       text: `Congrats ${capNsmalz.neat(
         newClient.rows[0].student_fname
@@ -81,7 +82,7 @@ exports.register = async (req, res) => {
 
     //Welcome Message
     const msg1 = {
-      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UCC <info@nunsaunical.com.ng>", // sender address
       to: newClient.rows[0].student_email, // list of receivers
       subject: "Welcome To NUNSA UCC", // Subject line
       text: `${capNsmalz.neat(

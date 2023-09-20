@@ -31,19 +31,21 @@ exports.approveAMaterial = async (req, res) => {
       "SELECT student_email, student_fname, student_lname FROM students WHERE student_id = $1",
       [updateMaterial.rows[0].uploadedby]
     );
+
     //credentials for email transportation
     const transport = nodemailer.createTransport({
-      host: "smtp.office365.com",
-      post: 587,
+      host: "eleven.qservers.net",
+      secure: true,
+      port: 465,
       auth: {
-        user: "reventlifyhub@outlook.com",
+        user: "info@nunsaunical.com.ng",
         pass: process.env.MAIL,
       },
     });
 
     //Mail to uploader
     const msg = {
-      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UCC <info@nunsaunical.com.ng>", // sender address
       to: uploaderDetails.rows[0].student_email, // list of receivers
       subject: "Material Approved", // Subject line
       text: `${neat(
@@ -97,19 +99,21 @@ exports.materialNotApproved = async (req, res) => {
       "SELECT student_email, student_fname, student_lname FROM students WHERE student_id = $1",
       [materialExists.rows[0].uploadedby]
     );
+
     //credentials for email transportation
     const transport = nodemailer.createTransport({
-      host: "smtp.office365.com",
-      post: 587,
+      host: "eleven.qservers.net",
+      secure: true,
+      port: 465,
       auth: {
-        user: "reventlifyhub@outlook.com",
+        user: "info@nunsaunical.com.ng",
         pass: process.env.MAIL,
       },
     });
 
     //Mail to uploader
     const msg = {
-      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UCC <info@nunsaunical.com.ng>", // sender address
       to: uploaderDetails.rows[0].student_email, // list of receivers
       subject: "Material Disapproved", // Subject line
       text: `${neat(

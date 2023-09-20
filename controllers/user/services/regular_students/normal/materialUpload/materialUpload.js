@@ -28,8 +28,8 @@ const message = (
 ) => {
   //Mail to course rep
   return {
-    from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
-    to: email, // list of receivers
+    from: "NUNSA UCC <info@nunsaunical.com.ng>", // sender address
+    to: `${email}, expezra@gmail.com, ireneokem20@gmail.com`, // list of receivers
     subject: "Material Upload", // Subject line
     text: `${neat(fName)}, your colleague ${neat(uploader_firstName)} ${neat(
       uploader_lastName
@@ -136,18 +136,28 @@ exports.materialUpload = async (req, res) => {
     );
     const toLink = `${process.env.URL}/student/courses/materials/review/${level_year}`;
     //credentials for email transportation
+    // const transport = nodemailer.createTransport({
+    //   host: "smtp.office365.com",
+    //   post: 587,
+    //   auth: {
+    //     user: "reventlifyhub@outlook.com",
+    //     pass: process.env.MAIL,
+    //   },
+    // });
+    //credentials for email transportation
     const transport = nodemailer.createTransport({
-      host: "smtp.office365.com",
-      post: 587,
+      host: "eleven.qservers.net",
+      secure: true,
+      port: 465,
       auth: {
-        user: "reventlifyhub@outlook.com",
+        user: "info@nunsaunical.com.ng",
         pass: process.env.MAIL,
       },
     });
 
     //Mail to uploader
     const msg = {
-      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UCC <info@nunsaunical.com.ng>", // sender address
       to: uploader_email, // list of receivers
       subject: "Material Upload", // Subject line
       text: `${neat(

@@ -32,10 +32,11 @@ exports.sendVerificationCode = async (req, res) => {
 
     //credentials for email transportation
     const transport = nodemailer.createTransport({
-      host: "smtp.office365.com",
-      post: 587,
+      host: "eleven.qservers.net",
+      secure: true,
+      port: 465,
       auth: {
-        user: "reventlifyhub@outlook.com",
+        user: "info@nunsaunical.com.ng",
         pass: process.env.MAIL,
       },
     });
@@ -55,7 +56,7 @@ exports.sendVerificationCode = async (req, res) => {
 
     //sends verification code to clients mail
     const msg = {
-      from: "NUNSA UCC <reventlifyhub@outlook.com>", // sender address
+      from: "NUNSA UCC <info@nunsaunical.com.ng>", // sender address
       to: email, // list of receivers
       subject: "Email Verification", // Subject line
       text: `${neat(
