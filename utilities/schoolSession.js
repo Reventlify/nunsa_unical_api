@@ -127,7 +127,18 @@ const updateSessions = async (sessionGiven) => {
   }
 };
 
-// handles session creation
+/**
+ * This is a function that handles session creation and also checks if
+ * the session already exists.
+ *
+ * @param {string} input - This can either be XX/XX or XX.
+ * @returns {object} 
+ *    {
+ *      success: boolean;
+ *      session_id: string;
+ *      existedPrev: boolean;
+ *    }
+ */
 exports.sessionExistence = async (input) => {
   const sessionGotten = inputGroomer(input.slice(0, 2));
   // try {
@@ -166,7 +177,12 @@ exports.sessionExistence = async (input) => {
   }
 };
 
-// converts 20XX/20XX to XX/XX format
+/**
+ * This is a function that converts 20XX/20XX to XX/XX format.
+ *
+ * @param {string} year - This can either be 20XX/20XX, XX/XX or XX.
+ * @returns {string} The 20XX/20XX format.
+ */
 exports.year_to_session_converter = async (year) => {
   if (typeof year === "string") {
     const theSyntax = /[1234567890]/.test(year);
@@ -209,6 +225,12 @@ exports.year_to_session_converter = async (year) => {
   return syntaxErrorMsg;
 };
 
+/**
+ * This is a function that determines the level of a student
+ *
+ * @param {string} session - This can either be XX/XX or XX.
+ * @returns {string} the level assigned to the user after evaluation
+ */
 exports.levelDeterminant = async (session) => {
   try {
     const sessionGotten = inputGroomer(session);

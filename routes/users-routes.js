@@ -103,6 +103,8 @@ router.post(
 /* Dues services ends */
 
 /* Election APIs begins */
+router.post("/exco/create_election", authenticateToken, user.createElection);
+router.get("/get_election", authenticateToken, user.getCurrentElection);
 /* Election APIs ends */
 
 module.exports = router;

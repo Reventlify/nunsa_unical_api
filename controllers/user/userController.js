@@ -5,9 +5,13 @@ const {
   seeThroughStudents,
 } = require("./services/excos/dues/viewStudent");
 const {
+  electionCreation,
+} = require("./services/excos/election/electionCreation");
+const {
   approveAMaterial,
   materialNotApproved,
 } = require("./services/regular_students/course_rep/materialApproval/materialApproval");
+const { checkCurrentElection } = require("./services/regular_students/normal/election/checksCurrentElection");
 const {
   getStudents,
   getStudentsExceptSeeker,
@@ -118,4 +122,6 @@ exports.clearDues = clearDues;
 /* Dues services ends */
 
 /* Election services begins */
+exports.createElection = electionCreation;
+exports.getCurrentElection = checkCurrentElection;
 /* Election services ends */

@@ -8,7 +8,7 @@ const {
   year_to_session_converter,
 } = require("../../../../../utilities/schoolSession");
 
-const electionCreation = async (req, res) => {
+exports.electionCreation = async (req, res) => {
   try {
     const { eleco, session, start_date, start_time } = req.body;
     const president = req.user;
@@ -90,12 +90,11 @@ const electionCreation = async (req, res) => {
       });
     }
 
-    // If the president is trying to make himself or any of his executives the electoral
-    // the electoral chairman .
+    // If the president is trying to make himself/herself or his/her VP the electoral chairman.
     return res
       .status(400)
       .json(
-        "You can not make yourself or any of your executives the electoral chairman."
+        "You can not make yourself or your VP the electoral chairman.."
       );
   } catch (error) {
     console.error(error);
