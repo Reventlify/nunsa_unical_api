@@ -45,6 +45,26 @@ CREATE TABLE dues (
   cleared_by TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
   dues_status TEXT NOT NULL
 );
+CREATE TABLE elections (
+  election_id Text NOT NULL UNIQUE,
+  sch_session_id TEXT NOT NULL REFERENCES sch_sessions(sch_session_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  eleco TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  election_date DATE NOT NULL,
+  election_time TIME NOT NULL,
+  election_status TEXT NOT NULL
+);
+CREATE TABLE candidates (
+  election_id TEXT NOT NULL REFERENCES elections(election_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  candidate_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  candidate_role TEXT NOT NULL,
+  candidate_status TEXT NOT NULL
+);
+CREATE TABLE votes (
+  election_id TEXT NOT NULL REFERENCES elections(election_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  candidate_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  voter_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,
+  votedat TIMESTAMP NOT NULL
+);
 CREATE TABLE excos (
   sch_session_id TEXT NOT NULL REFERENCES sch_sessions(sch_session_id) ON DELETE CASCADE ON UPDATE CASCADE,
   exco_id TEXT NOT NULL REFERENCES students(student_id) ON DELETE CASCADE ON UPDATE CASCADE,

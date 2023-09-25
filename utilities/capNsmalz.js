@@ -336,3 +336,22 @@ exports.getNotifications = async (userID) => {
     return console.log(error);
   }
 };
+
+exports.getTimeStamp = (date) => {
+  if (typeof date === "string") {
+    const dateString = date;
+    const dateParts = dateString.split("/");
+    const month = parseInt(dateParts[0]) - 1; // Months are 0-based in JavaScript Date object
+    const day = parseInt(dateParts[1]);
+    const year = parseInt(dateParts[2]);
+
+    const timestamp = new Date(year, month, day).getTime();
+
+    return timestamp; // This will return the timestamp in milliseconds since Jan 1, 1970
+  }
+};
+
+exports.currentTimestamp = () => {
+  const currentTimestamp = Date.now();
+  return currentTimestamp;
+};

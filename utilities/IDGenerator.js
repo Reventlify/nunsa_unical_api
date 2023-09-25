@@ -364,3 +364,27 @@ exports.duesID = async () => {
     return console.log(error);
   }
 };
+// generates election IDs
+exports.electionID = async () => {
+  // generates election ID
+  let id = randomString({
+    length: 10,
+    numeric: true,
+    letters: true,
+    special: false,
+  });
+  try {
+    const checker = await pool.query(
+      "SELECT * FROM elections WHERE election_id = $1",
+      [id]
+    );
+
+    if (checker.rows.length !== 0) {
+      return electionID();
+    } else {
+      return id;
+    }
+  } catch (error) {
+    return console.log(error);
+  }
+};

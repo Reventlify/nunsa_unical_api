@@ -17,6 +17,51 @@ exports.viewStudent = async (req, res) => {
     )
       return res.status(400).json("Bad guy");
 
+    // const query = `
+    // SELECT
+    // s.student_id,
+    // s.sch_session_id,
+    // s.student_email,
+    // s.student_mat_no,
+    // s.student_fname,
+    // s.student_mname,
+    // s.student_lname,
+    // s.student_role,
+    // s.student_about,
+    // s.student_phone,
+    // s.student_address,
+    // s.student_city,
+    // s.student_state,
+    // ss.sch_session,
+    // COUNT(d.student_id) AS total_dues
+    // FROM
+    // students AS s
+    // LEFT JOIN
+    // sch_sessions AS ss ON s.sch_session_id = ss.sch_session_id
+    // LEFT JOIN
+    // dues AS d ON s.student_id = d.student_id
+    // GROUP BY
+    // s.student_id,
+    // s.sch_session_id,
+    // s.student_email,
+    // s.student_mat_no,
+    // s.student_fname,
+    // s.student_mname,
+    // s.student_lname,
+    // s.student_role,
+    // s.student_about,
+    // s.student_phone,
+    // s.student_address,
+    // s.student_city,
+    // s.student_state,
+    // ss.sch_session
+    // ORDER BY
+    // s.student_fname ASC,  -- Ascending order by first name
+    // s.student_mname ASC,  -- Ascending order by middle name
+    // s.student_lname ASC;  -- Ascending order by last name
+
+    // `;
+
     const query = `
     SELECT
     s.student_id,
@@ -33,7 +78,10 @@ exports.viewStudent = async (req, res) => {
     s.student_city,
     s.student_state,
     ss.sch_session,
-    COUNT(d.student_id) AS total_dues
+    CASE
+        WHEN COUNT(d.student_id) > 0 THEN 'yes'
+        ELSE 'no'
+    END AS total_dues
     FROM
     students AS s
     LEFT JOIN
@@ -56,9 +104,10 @@ exports.viewStudent = async (req, res) => {
     s.student_state,
     ss.sch_session
     ORDER BY
-    s.student_fname ASC,  -- Ascending order by first name
-    s.student_mname ASC,  -- Ascending order by middle name
-    s.student_lname ASC;  -- Ascending order by last name
+    s.student_fname ASC,
+    s.student_mname ASC,
+    s.student_lname ASC;
+
 
     `;
     // Execute the SQL query with the search criteria
