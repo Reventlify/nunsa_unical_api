@@ -71,6 +71,7 @@ exports.logger = async (req, res) => {
       // permissions for normal members
       user_role === "member"
         ? {
+            electionCo: false,
             election: false,
             blockClass: false,
             blockGen: false,
@@ -82,6 +83,7 @@ exports.logger = async (req, res) => {
         : // permissions for class rep
         user_role === "course rep"
         ? {
+            electionCo: false,
             election: false,
             blockClass: true,
             blockGen: false,
@@ -93,6 +95,7 @@ exports.logger = async (req, res) => {
         : // permissions for the presidents
         user_role === "president" || user_role === "vice president"
         ? {
+            electionCo: false,
             election: true,
             blockClass: true,
             blockGen: true,
@@ -104,6 +107,7 @@ exports.logger = async (req, res) => {
         : // permissions for eleco chair
         user_role === "eleco"
         ? {
+            electionCo: true,
             election: true,
             blockClass: false,
             blockGen: false,
@@ -115,6 +119,7 @@ exports.logger = async (req, res) => {
         : // : // permissions for financial secretary
           // user_role === "financial secretary"
           // ? {
+          //     electionCo: false,
           //     election: true,
           //     blockClass: true,
           //     blockGen: true,
@@ -125,6 +130,7 @@ exports.logger = async (req, res) => {
           //   }
           // permissions for other executives
           {
+            electionCo: false,
             election: true,
             blockClass: true,
             blockGen: true,

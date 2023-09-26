@@ -422,3 +422,29 @@ FROM LastMessage lm
       AND lm.user1_id = other_user.student_id
     )
   )
+SELECT 
+  e.election_id,
+  s.sch_session,
+  s.sch_session_id,
+  e.eleco,
+  u.student_fname,
+  u.student_lname,
+  e.election_date,
+  e.election_time,
+  e.election_status FROM elections e
+  LEFT JOIN sch_sessions s
+  ON e.sch_session_id = s.sch_session_id
+  LEFT JOIN students u
+  ON e.eleco = u.student_id
+  WHERE e.election_status = 'pending'
+  GROUP BY
+  e.election_id,
+  s.sch_session,
+  s.sch_session_id,
+  e.eleco,
+  u.student_fname,
+  u.student_lname,
+  e.election_date,
+  e.election_time,
+  e.election_status;
+  

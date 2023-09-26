@@ -31,8 +31,11 @@ exports.electionCreation = async (req, res) => {
       [president]
     );
 
-    // If the student making the request is not the president
-    if (president_details.rows[0].student_role !== "president")
+    // If the student making the request is not the president or vice president
+    if (
+      president_details.rows[0].student_role !== "president" &&
+      president_details.rows[0].student_role !== "vice president"
+    )
       return res
         .status(400)
         .json("You are not authorized to perform this action.");
@@ -91,11 +94,10 @@ exports.electionCreation = async (req, res) => {
     }
 
     // If the president is trying to make himself/herself or his/her VP the electoral chairman.
+    // or vice president(vise versa above)
     return res
       .status(400)
-      .json(
-        "You can not make yourself or your VP the electoral chairman.."
-      );
+      .json("You can not make yourself the electoral chairman..");
   } catch (error) {
     console.error(error);
     return res.status(500).json("Something went wrong");
