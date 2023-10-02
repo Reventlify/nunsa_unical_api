@@ -12,7 +12,8 @@ exports.verifyStudentMat = async (req, res) => {
     // If the student making the request is not the president or vice president
     if (
       president_details.rows[0].student_role !== "president" &&
-      president_details.rows[0].student_role !== "vice president"
+      president_details.rows[0].student_role !== "vice president" &&
+      president_details.rows[0].student_role !== "developer"
     )
       return res
         .status(400)
@@ -30,7 +31,8 @@ exports.verifyStudentMat = async (req, res) => {
     // If the eleco is the president or vice president
     if (
       eleco_details.rows[0].student_role === "president" ||
-      eleco_details.rows[0].student_role === "vice president"
+      eleco_details.rows[0].student_role === "vice president" ||
+      eleco_details.rows[0].student_role !== "developer"
     )
       return res
         .status(400)

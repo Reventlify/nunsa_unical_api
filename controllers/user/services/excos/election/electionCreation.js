@@ -34,7 +34,8 @@ exports.electionCreation = async (req, res) => {
     // If the student making the request is not the president or vice president
     if (
       president_details.rows[0].student_role !== "president" &&
-      president_details.rows[0].student_role !== "vice president"
+      president_details.rows[0].student_role !== "vice president" &&
+      president_details.rows[0].student_role !== "developer"
     )
       return res
         .status(400)
@@ -56,7 +57,8 @@ exports.electionCreation = async (req, res) => {
     // carries on with the action if the user is not the Pres or VP
     if (
       eleco_details.rows[0].student_role !== "president" &&
-      eleco_details.rows[0].student_role !== "vice president"
+      eleco_details.rows[0].student_role !== "vice president" &&
+      president_details.rows[0].student_role !== "developer"
     ) {
       const createEleco = `
           INSERT INTO messages(

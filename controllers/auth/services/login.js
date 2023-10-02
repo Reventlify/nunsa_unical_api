@@ -116,19 +116,20 @@ exports.logger = async (req, res) => {
             clearDues: false,
             approvePDF: false,
           }
-        : // : // permissions for financial secretary
-          // user_role === "financial secretary"
-          // ? {
-          //     electionCo: false,
-          //     election: true,
-          //     blockClass: true,
-          //     blockGen: true,
-          //     approveBlog: true,
-          //     viewStudents: true,
-          //     clearDues: true,
-          //     approvePDF: true,
-          //   }
+        : // permissions for developer
+          user_role === "developer"
+          ? {
+              electionCo: true,
+              election: true,
+              blockClass: true,
+              blockGen: true,
+              approveBlog: true,
+              viewStudents: true,
+              clearDues: false,
+              approvePDF: true,
+            }
           // permissions for other executives
+          :
           {
             electionCo: false,
             election: false,
