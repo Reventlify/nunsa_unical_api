@@ -7,11 +7,14 @@ const {
 const {
   electionCreation,
 } = require("./services/excos/election/electionCreation");
+const { verifyStudentMat } = require("./services/excos/students/verifyStudent");
 const {
   approveAMaterial,
   materialNotApproved,
 } = require("./services/regular_students/course_rep/materialApproval/materialApproval");
-const { checkCurrentElection } = require("./services/regular_students/normal/election/checksCurrentElection");
+const {
+  checkCurrentElection,
+} = require("./services/regular_students/normal/election/checksCurrentElection");
 const {
   getStudents,
   getStudentsExceptSeeker,
@@ -124,4 +127,5 @@ exports.clearDues = clearDues;
 /* Election services begins */
 exports.createElection = electionCreation;
 exports.getCurrentElection = checkCurrentElection;
+exports.getNewElecoDetails = verifyStudentMat;
 /* Election services ends */

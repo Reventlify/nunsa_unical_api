@@ -27,7 +27,7 @@ exports.electionCreation = async (req, res) => {
         );
 
     const president_details = await pool.query(
-      "SELECT * FROM students WHERE students_id = $1",
+      "SELECT * FROM students WHERE student_id = $1",
       [president]
     );
 
@@ -49,7 +49,7 @@ exports.electionCreation = async (req, res) => {
     );
 
     const eleco_details = await pool.query(
-      "SELECT * FROM students WHERE students_id = $1",
+      "SELECT * FROM students WHERE student_mat_no = $1",
       [eleco]
     );
 
