@@ -32,7 +32,7 @@ exports.verifyStudentMat = async (req, res) => {
     if (
       eleco_details.rows[0].student_role === "president" ||
       eleco_details.rows[0].student_role === "vice president" ||
-      eleco_details.rows[0].student_role !== "developer"
+      eleco_details.rows[0].student_role === "developer"
     )
       return res
         .status(400)

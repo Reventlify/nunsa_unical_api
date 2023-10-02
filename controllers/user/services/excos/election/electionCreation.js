@@ -58,7 +58,7 @@ exports.electionCreation = async (req, res) => {
     if (
       eleco_details.rows[0].student_role !== "president" &&
       eleco_details.rows[0].student_role !== "vice president" &&
-      president_details.rows[0].student_role !== "developer"
+      eleco_details.rows[0].student_role !== "developer"
     ) {
       const createEleco = `
           INSERT INTO messages(
