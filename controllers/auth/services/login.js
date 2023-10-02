@@ -131,7 +131,7 @@ exports.logger = async (req, res) => {
           // permissions for other executives
           {
             electionCo: false,
-            election: true,
+            election: false,
             blockClass: true,
             blockGen: true,
             approveBlog: true,
