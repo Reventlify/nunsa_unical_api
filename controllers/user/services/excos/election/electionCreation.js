@@ -13,7 +13,10 @@ exports.electionCreation = async (req, res) => {
   try {
     const { eleco, start_date, start_time } = req.body;
     const president = req.user;
-    const session = "2021/2022";
+    const currentSession = await pool.query(
+      `select * from sch_sessions order by sch_session desc limit 1`
+    );
+    const session = currentSession.rows[0].sch_session;
 
     const electionRunning = await pool.query(
       `SELECT * FROM elections WHERE election_status = 'pending'`
