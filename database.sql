@@ -448,3 +448,38 @@ SELECT
   e.election_time,
   e.election_status;
   
+-- function
+CREATE OR REPLACE FUNCTION GetStudentById(student_id_param TEXT)
+RETURNS TABLE (
+    student_id TEXT, 
+    sch_session_id TEXT,
+    student_email TEXT,
+    student_mat_no TEXT,
+    student_fname TEXT,
+    student_mname TEXT,
+    student_lname TEXT,
+    student_role TEXT,
+    student_photo TEXT
+)
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        s.student_id, 
+        s.sch_session_id,
+        s.student_email,
+        s.student_mat_no,
+        s.student_fname,
+        s.student_mname,
+        s.student_lname,
+        s.student_role,
+        s.student_photo
+    FROM students s WHERE s.student_id = student_id_param;
+END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT * FROM GetStudentById('3047886569');
+
+DROP FUNCTION IF EXISTS GetStudentById(TEXT);

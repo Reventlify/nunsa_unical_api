@@ -1,4 +1,5 @@
 const pool = require("../../../../../db");
+const moment = require("moment");
 const { electionID } = require("../../../../../utilities/IDGenerator");
 const {
   getTimeStamp,
@@ -10,13 +11,25 @@ const {
 
 exports.electionCreation = async (req, res) => {
   try {
-    const { eleco, session, start_date, start_time } = req.body;
+    const { eleco, start_date, start_time } = req.body;
     const president = req.user;
+    const session = "2021/2022";
 
-    const start_date_timestamp = getTimeStamp(start_date);
+    const electionRunning = await pool.query(
+      `SELECT * FROM elections WHERE election_status = 'pending'`
+    );
+    // checks if there is a current election running
+    if (electionRunning.rows.length !== 0)
+      return res
+        .status(400)
+        .json(
+          "Can not create a new election when there is a current election running."
+        );
+
+    const start_date_timestamp = getTimeStamp(
+      moment(start_date).format("MM/DD/YYYY")
+    );
     const current_timestamp = currentTimestamp();
-
-    console.log(`Is ${start_date_timestamp} <= ${current_timestamp}.`);
 
     // checks if the user selected a date that is not the future.
     if (start_date_timestamp <= current_timestamp)
@@ -42,7 +55,7 @@ exports.electionCreation = async (req, res) => {
         .json("You are not authorized to perform this action.");
 
     // refines the session string to e.g 16/17
-    const refinedSession = year_to_session_converter(session);
+    const refinedSession = await year_to_session_converter(session);
 
     const session_details = await pool.query(
       "SELECT * FROM sch_sessions WHERE sch_session = $1",
@@ -61,7 +74,7 @@ exports.electionCreation = async (req, res) => {
       eleco_details.rows[0].student_role !== "developer"
     ) {
       const createEleco = `
-          INSERT INTO messages(
+          INSERT INTO elections(
             election_id,
             sch_session_id,
             eleco,
