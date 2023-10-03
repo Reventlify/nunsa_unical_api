@@ -93,7 +93,7 @@ exports.electionCreation = async (req, res) => {
         await electionID(),
         session_details.rows[0].sch_session_id,
         eleco_details.rows[0].student_id,
-        start_date,
+        moment(start_date).format("YYYY-MM-DD"),
         start_time,
         "pending",
       ]);
