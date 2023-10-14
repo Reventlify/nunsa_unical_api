@@ -12,7 +12,7 @@ exports.candidateApply = async (req, res) => {
     const student_role = userDetails.rows[0].student_role;
 
     // Check if the student can apply based on their role
-    const ineligibleRoles = ["president", "vice president", "dev", "eleco"];
+    const ineligibleRoles = ["president", "vice president", "developer", "eleco"];
     if (ineligibleRoles.includes(student_role)) {
       return res
         .status(400)
