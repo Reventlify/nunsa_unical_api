@@ -24,7 +24,7 @@ exports.voteForCandidate = async (req, res) => {
     );
 
     if (electionQuery1.rows.length === 0) {
-      return res.status(400).json("election has not started come back later.");
+      return res.status(400).json("either the election has not started or has ended come back later.");
     }
 
     const electionId = electionQuery1.rows[0].election_id;
