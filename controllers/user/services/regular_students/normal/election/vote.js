@@ -66,9 +66,9 @@ INNER JOIN
       [voterId, candidateQuery.rows[0].candidate_role]
     );
 
-    if (votedBefore.rows.length === 1) {
-      return res.status(400).json("You can't vote in this cathegory again");
-    }
+    // if (votedBefore.rows.length === 1) {
+    //   return res.status(400).json("You can't vote in this cathegory again");
+    // }
     // Cast the vote
     const voteQuery = await pool.query(
       "INSERT INTO votes (election_id, candidate_id, voter_id, votedat) VALUES ($1, $2, $3, $4)",

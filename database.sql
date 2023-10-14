@@ -584,4 +584,4 @@ INNER JOIN
 INNER JOIN
     candidates c ON v.candidate_id = c.candidate_id
 
-    Where c.candidate_role = 'vice president' and s.student_id = '3301920602';
+    Where c.candidate_role = 'president' and s.student_id = '3301920602';
