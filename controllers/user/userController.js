@@ -4,7 +4,7 @@ const {
   viewStudent,
   seeThroughStudents,
 } = require("./services/excos/dues/viewStudent");
-const { approveCandidate } = require("./services/excos/election/candidateApproval");
+const { approveCandidate, getCandidates } = require("./services/excos/election/candidateApproval");
 const {
   electionCreation,
 } = require("./services/excos/election/electionCreation");
@@ -134,6 +134,7 @@ exports.clearDues = clearDues;
 exports.createElection = electionCreation;
 exports.getCurrentElection = checkCurrentElection;
 exports.getNewElecoDetails = verifyStudentMat;
+exports.getCandidates = getCandidates;
 exports.candidateApply = candidateApply;
 exports.appplicationCheck = appplicationCheck;
 exports.candidateApproval = approveCandidate;

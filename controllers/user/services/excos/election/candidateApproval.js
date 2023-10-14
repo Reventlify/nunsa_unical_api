@@ -5,7 +5,17 @@ const { startWithCase } = require("../../../../../utilities/capNsmalz");
 exports.approveCandidate = async (req, res) => {
   try {
     const { candidate_id } = req.body;
-    const elecoId = req.user; // Assuming req.user contains the student ID
+    const elecoId = req.user;
+    // Check if the election status is 'pending'
+    const electionStatusQuery = await pool.query(
+      `SELECT election_id, sch_session_id FROM elections WHERE election_status = 'pending' ORDER BY election_date DESC LIMIT 1`
+    );
+    const election = electionStatusQuery.rows;
+
+    if (election.length === 0) {
+      return res.status(400).json("No election in progress.");
+    }
+    const election_id = electionStatusQuery.rows[0].election_id;
 
     // Check if the student has the 'eleco' role
     const userDetails = await pool.query(
@@ -61,13 +71,272 @@ exports.approveCandidate = async (req, res) => {
 
     await transport.sendMail(mailOptions);
 
-    return res
-      .status(200)
-      .json(
-        "Candidate application approved successfully. Email sent to the candidate."
-      );
+    const president = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'president'`,
+      [election_id]
+    );
+    const vPresident = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'vice president'`,
+      [election_id]
+    );
+    const finSec = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'financial secretary'`,
+      [election_id]
+    );
+    const genSec = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'general secretary'`,
+      [election_id]
+    );
+    const treasurer = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'treasurer'`,
+      [election_id]
+    );
+    const dirOfWelfare = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of welfare'`,
+      [election_id]
+    );
+    const dirOfSocials = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of socials'`,
+      [election_id]
+    );
+    const dirOfSports = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of sports'`,
+      [election_id]
+    );
+    const dirOfHealth = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of health'`,
+      [election_id]
+    );
+    const dirOfInfo = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of information'`,
+      [election_id]
+    );
+
+    return res.status(200).json({
+      president: president.rows,
+      vPresident: vPresident.rows,
+      finSec: finSec.rows,
+      genSec: genSec.rows,
+      treasurer: treasurer.rows,
+      dirOfWelfare: dirOfWelfare.rows,
+      dirOfSocials: dirOfSocials.rows,
+      dirOfSports: dirOfSports.rows,
+      dirOfHealth: dirOfHealth.rows,
+      dirOfInfo: dirOfInfo.rows,
+    });
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).json("Internal server error.");
+    return res.status(500).json("Something went wrong.");
   }
+};
+
+exports.getCandidates = async (req, res) => {
+  try {
+    const user = req.user;
+    // Check if the election status is 'pending'
+    const electionStatusQuery = await pool.query(
+      `SELECT election_id, sch_session_id FROM elections WHERE election_status = 'pending' ORDER BY election_date DESC LIMIT 1`
+    );
+    const election = electionStatusQuery.rows;
+
+    if (election.length === 0) {
+      return res.status(400).json("No election in progress.");
+    }
+    const election_id = electionStatusQuery.rows[0].election_id;
+    const president = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'president'`,
+      [election_id]
+    );
+    const vPresident = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'vice president'`,
+      [election_id]
+    );
+    const finSec = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'financial secretary'`,
+      [election_id]
+    );
+    const genSec = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'general secretary'`,
+      [election_id]
+    );
+    const treasurer = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'treasurer'`,
+      [election_id]
+    );
+    const dirOfWelfare = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of welfare'`,
+      [election_id]
+    );
+    const dirOfSocials = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of socials'`,
+      [election_id]
+    );
+    const dirOfSports = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of sports'`,
+      [election_id]
+    );
+    const dirOfHealth = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of health'`,
+      [election_id]
+    );
+    const dirOfInfo = await pool.query(
+      `SELECT
+    c.candidate_id,
+    c.candidate_role,
+    c.candidate_status,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name FROM candidates c
+  LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+     WHERE c.election_id = $1 and c.candidate_role = 'director of information'`,
+      [election_id]
+    );
+
+    return res.status(200).json({
+      president: president.rows,
+      vPresident: vPresident.rows,
+      finSec: finSec.rows,
+      genSec: genSec.rows,
+      treasurer: treasurer.rows,
+      dirOfWelfare: dirOfWelfare.rows,
+      dirOfSocials: dirOfSocials.rows,
+      dirOfSports: dirOfSports.rows,
+      dirOfHealth: dirOfHealth.rows,
+      dirOfInfo: dirOfInfo.rows,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json("Something went wrong.");}
 };
