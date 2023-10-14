@@ -584,4 +584,23 @@ INNER JOIN
 INNER JOIN
     candidates c ON v.candidate_id = c.candidate_id
 
-    Where c.candidate_role = 'president' and s.student_id = '3301920602';
+    Where c.candidate_role = 'president' and v.voter_id = '3301920602';
+
+    SELECT
+    c.candidate_role,
+    v.voter_id,
+    COUNT(*) AS count_of_votes
+FROM
+    students s
+INNER JOIN
+    votes v ON s.student_id = v.voter_id
+INNER JOIN
+    candidates c ON v.candidate_id = c.candidate_id
+WHERE
+    c.candidate_role = 'vice president'
+    AND v.voter_id = '3301920602'
+GROUP BY
+    c.candidate_role, v.voter_id;
+
+
+    SELECT * FROM dues WHERE student_id = '3301920602' LIMIT 1

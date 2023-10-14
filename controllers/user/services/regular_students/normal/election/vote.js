@@ -52,23 +52,28 @@ exports.voteForCandidate = async (req, res) => {
 
     const votedBefore = await pool.query(
       `
-    SELECT
-    COUNT(*) AS count_of_votes
-FROM
-    students s
-INNER JOIN
-    votes v ON s.student_id = v.voter_id
-INNER JOIN
-    candidates c ON v.candidate_id = c.candidate_id
-
-    Where c.candidate_role = $2 and s.student_id = $1;
+      SELECT
+      c.candidate_role,
+      v.voter_id,
+      COUNT(*) AS count_of_votes
+  FROM
+      students s
+  INNER JOIN
+      votes v ON s.student_id = v.voter_id
+  INNER JOIN
+      candidates c ON v.candidate_id = c.candidate_id
+  WHERE
+      c.candidate_role = $2
+      AND v.voter_id = $1
+  GROUP BY
+      c.candidate_role, v.voter_id;
     `,
       [voterId, candidateQuery.rows[0].candidate_role]
     );
 
-    // if (votedBefore.rows.length === 1) {
-    //   return res.status(400).json("You can't vote in this cathegory again");
-    // }
+    if (votedBefore.rows.length === 1) {
+      return res.status(400).json("You can't vote in this cathegory again");
+    }
     // Cast the vote
     const voteQuery = await pool.query(
       "INSERT INTO votes (election_id, candidate_id, voter_id, votedat) VALUES ($1, $2, $3, $4)",
