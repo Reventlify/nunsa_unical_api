@@ -111,7 +111,7 @@ router.post("/candidate_apply", authenticateToken, user.candidateApply);
 router.get("/candidate_check", authenticateToken, user.appplicationCheck);
 router.post("/candidate_approve", authenticateToken, user.candidateApproval);
 router.get("/election_results", authenticateToken, user.electionResults);
-router.get("/vote", authenticateToken, user.vote);
+router.post("/vote", authenticateToken, user.vote);
 /* Election APIs ends */
 
 module.exports = router;

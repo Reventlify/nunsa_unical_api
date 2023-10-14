@@ -389,28 +389,29 @@ exports.getElectionResults = async (cathegory, election, voter) => {
   try {
     const query = `
     SELECT
-    candidates.candidate_id,
-    candidates.candidate_role,
-    CONCAT(students.student_fname, ' ', students.student_lname) AS candidate_name,
-    COUNT(votes.voter_id) AS votes,
-    CASE WHEN COUNT(CASE WHEN votes.voter_id = $3 THEN 1 END) > 0 THEN 'yes' ELSE 'no' END AS voted_for
-  FROM
-    candidates
-  LEFT JOIN
-    votes ON candidates.candidate_id = votes.candidate_id
-  LEFT JOIN
-    students ON candidates.candidate_id = students.student_id
-  WHERE
-    candidates.candidate_role = $1 AND candidates.candidate_status = 'approved'
-    AND votes.election_id = $2
-  GROUP BY
-    candidates.candidate_id, candidates.candidate_role, candidate_name;
+    c.candidate_id,
+    c.candidate_role,
+    CONCAT(s.student_fname, ' ', s.student_lname) AS candidate_name,
+    COUNT(v.voter_id) AS votes,
+    COALESCE(MAX(CASE WHEN v.voter_id = '3301920602' THEN 'yes' END), 'no') AS voted_for
+    
+FROM
+    candidates c
+LEFT JOIN
+    votes v ON c.candidate_id = v.candidate_id
+LEFT JOIN
+    students s ON c.candidate_id = s.student_id
+    WHERE c.candidate_role = $1 AND c.election_id = $2
+GROUP BY
+    c.candidate_id, c.candidate_role, candidate_name
+
   
       `;
 
-    const result = await pool.query(query, [cathegory, election, voter]);
+    const result = await pool.query(query, [cathegory, election]);
     return result.rows;
   } catch (error) {
     return console.log(`getElectionResults error: ${error}`);
   }
 };
+// CASE WHEN MAX(CASE WHEN votes.voter_id = $3 THEN 1 ELSE 0 END) = 1 THEN 'yes' ELSE 'no' END AS voted_for

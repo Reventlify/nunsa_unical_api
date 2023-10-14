@@ -6,7 +6,7 @@ exports.electionResults = async (req, res) => {
     const voterId = req.user;
     // Get the election ID with status 'pending'
     const electionQuery = await pool.query(
-      "SELECT election_id FROM elections WHERE election_status = 'pending' election_status = 'started' election_status = 'concluded'"
+      "SELECT election_id FROM elections WHERE election_status = 'pending' OR election_status = 'started' OR election_status = 'concluded'"
     );
 
     if (electionQuery.rows.length === 0) {
@@ -69,17 +69,18 @@ exports.electionResults = async (req, res) => {
     );
 
     return res.status(200).json({
-      president: president.rows,
-      vPresident: vPresident.rows,
-      finSec: finSec.rows,
-      genSec: genSec.rows,
-      treasurer: treasurer.rows,
-      dirOfWelfare: dirOfWelfare.rows,
-      dirOfSocials: dirOfSocials.rows,
-      dirOfSports: dirOfSports.rows,
-      dirOfHealth: dirOfHealth.rows,
-      dirOfInfo: dirOfInfo.rows,
+      president: president,
+      vPresident: vPresident,
+      finSec: finSec,
+      genSec: genSec,
+      treasurer: treasurer,
+      dirOfWelfare: dirOfWelfare,
+      dirOfSocials: dirOfSocials,
+      dirOfSports: dirOfSports,
+      dirOfHealth: dirOfHealth,
+      dirOfInfo: dirOfInfo,
     });
+    // return res.status(200).json(president.rows)
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json("Internal server error.");

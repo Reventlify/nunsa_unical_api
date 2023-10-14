@@ -4,21 +4,22 @@ const { getElectionResults } = require("../../../../../../utilities/capNsmalz");
 exports.voteForCandidate = async (req, res) => {
   try {
     const { candidate_id } = req.body;
+    console.log(candidate_id);
     const voterId = req.user;
     // Get the election ID with status 'pending'
-    const electionQuery = await pool.query(
-      "SELECT election_id FROM elections WHERE election_status = $1",
-      ["pending"]
-    );
+    // const electionQuery = await pool.query(
+    //   "SELECT election_id FROM elections WHERE election_status = $1",
+    //   ["pending"]
+    // );
 
-    if (electionQuery.rows.length === 0) {
-      return res
-        .status(400)
-        .json("Invalid election ID or the election is not in progress.");
-    }
+    // if (electionQuery.rows.length === 0) {
+    //   return res
+    //     .status(400)
+    //     .json("Invalid election ID or the election is not in progress.");
+    // }
     // Get the election ID with status 'pending'
     const electionQuery1 = await pool.query(
-      "SELECT election_id FROM elections WHERE election_status = $1",
+      "SELECT * FROM elections WHERE election_status = $1",
       ["started"]
     );
 
@@ -28,7 +29,7 @@ exports.voteForCandidate = async (req, res) => {
         .json("election has not started come back later.");
     }
 
-    const electionId = electionQuery.rows[0].election_id;
+    const electionId = electionQuery1.rows[0].election_id;
     // Check if the candidate is valid
     const candidateQuery = await pool.query(
       "SELECT * FROM candidates WHERE candidate_id = $1",
@@ -54,7 +55,7 @@ exports.voteForCandidate = async (req, res) => {
     // Cast the vote
     const voteQuery = await pool.query(
       "INSERT INTO votes (election_id, candidate_id, voter_id, votedat) VALUES ($1, $2, $3, $4)",
-      [election_id, candidate_id, voterId, new Date()]
+      [electionId, candidate_id, voterId, new Date()]
     );
     const president = await getElectionResults(
       "president",

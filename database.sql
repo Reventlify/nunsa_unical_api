@@ -535,3 +535,41 @@ ORDER BY
     WHEN candidate_roles.role_name = 'director of health' THEN 9
     WHEN candidate_roles.role_name = 'director of information' THEN 10
   END;
+
+
+SELECT
+    candidates.candidate_id,
+    candidates.candidate_role,
+    CONCAT(students.student_fname, ' ', students.student_lname) AS candidate_name,
+    COUNT(votes.voter_id) AS votes,
+    CASE WHEN COUNT(CASE WHEN votes.voter_id = '3301920602' THEN 1 END) > 0 THEN 'yes' ELSE 'no' END AS voted_for
+FROM
+    candidates
+LEFT JOIN
+    votes ON candidates.candidate_id = votes.candidate_id
+LEFT JOIN
+    students ON candidates.candidate_id = students.student_id
+WHERE
+    candidates.candidate_role = 'president' AND candidates.candidate_status = 'approved'
+    AND votes.election_id = 'AvQPeTMOlG'
+GROUP BY
+    candidates.candidate_id, candidates.candidate_role, CONCAT(students.student_fname, ' ', students.student_lname), candidates.candidate_status;
+
+
+SELECT
+    candidates.candidate_id,
+    candidates.candidate_role,
+    CONCAT(students.student_fname, ' ', students.student_lname) AS candidate_name,
+    COUNT(votes.voter_id) AS votes,
+    CASE WHEN MAX(votes.voter_id = '3301920602') THEN 'yes' ELSE 'no' END AS voted_for
+FROM
+    candidates
+LEFT JOIN
+    votes ON candidates.candidate_id = votes.candidate_id
+LEFT JOIN
+    students ON candidates.candidate_id = students.student_id
+WHERE
+    candidates.candidate_role = 'president' AND candidates.candidate_status = 'approved'
+    AND votes.election_id = 'AvQPeTMOlG'
+GROUP BY
+    candidates.candidate_id, candidates.candidate_role, CONCAT(students.student_fname, ' ', students.student_lname), candidates.candidate_status;
