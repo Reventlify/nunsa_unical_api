@@ -15,6 +15,8 @@ const { sendMessage } = require("./websockets/sendMessage/sendMessage");
 const {
   markRead,
 } = require("./websockets/sendMessage/messageHelpers/markRead");
+const { vote } = require("./websockets/election/vote");
+const { getVotes } = require("./websockets/election/getVotes");
 
 const app = express();
 const whitelist = ["https://admin.socket.io", process.env.URL];
@@ -140,6 +142,18 @@ io.on("connection", async (socket) => {
         recipientSocketId.emit("isTyping", bool);
       }
     });
+
+    // socket.on("vote", async(candidate_id) => {
+    //   const voteResult = await vote(candidate_id);
+
+    //   if (voteResult === 200) {
+    //     const totalVotes = await getVotes();
+
+    //     socket.broadcast.emit("election_results")
+    //     return;
+    //   }
+    //   return;
+    // })
   } catch (error) {
     // Check if the token is valid and get the expiration timestamp
     if (decodedT && decodedT.exp) {

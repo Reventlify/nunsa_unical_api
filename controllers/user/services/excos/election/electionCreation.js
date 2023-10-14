@@ -19,7 +19,7 @@ exports.electionCreation = async (req, res) => {
     const session = currentSession.rows[0].sch_session;
 
     const electionRunning = await pool.query(
-      `SELECT * FROM elections WHERE election_status = 'pending'`
+      `SELECT * FROM elections WHERE election_status = 'pending' or election_status = 'started' or election_status = 'concluded'`
     );
     // checks if there is a current election running
     if (electionRunning.rows.length !== 0)
@@ -35,12 +35,12 @@ exports.electionCreation = async (req, res) => {
     const current_timestamp = currentTimestamp();
 
     // checks if the user selected a date that is not the future.
-    if (start_date_timestamp <= current_timestamp)
-      return res
-        .status(400)
-        .json(
-          "You have to select a date that is not the past or present, we only travel to the future. 😉"
-        );
+    // if (start_date_timestamp <= current_timestamp)
+    //   return res
+    //     .status(400)
+    //     .json(
+    //       "You have to select a date that is not the past or present, we only travel to the future. 😉"
+    //     );
 
     const president_details = await pool.query(
       "SELECT * FROM students WHERE student_id = $1",
@@ -98,9 +98,9 @@ exports.electionCreation = async (req, res) => {
         "pending",
       ]);
 
-      await pool.query(
-        "UPDATE students SET student_role = $1 WHERE student_id = $2",
-        ["eleco", eleco]
+      const must = await pool.query(
+        "UPDATE students SET student_role = 'eleco' WHERE student_mat_no = $1",
+        [eleco]
       );
 
       return res.status(200).json({

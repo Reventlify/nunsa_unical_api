@@ -4,6 +4,7 @@ const {
   viewStudent,
   seeThroughStudents,
 } = require("./services/excos/dues/viewStudent");
+const { approveCandidate } = require("./services/excos/election/candidateApproval");
 const {
   electionCreation,
 } = require("./services/excos/election/electionCreation");
@@ -13,8 +14,13 @@ const {
   materialNotApproved,
 } = require("./services/regular_students/course_rep/materialApproval/materialApproval");
 const {
+  candidateApply, appplicationCheck,
+} = require("./services/regular_students/normal/election/candidateApply");
+const {
   checkCurrentElection,
 } = require("./services/regular_students/normal/election/checksCurrentElection");
+const { electionResults } = require("./services/regular_students/normal/election/getVotes");
+const { voteForCandidate } = require("./services/regular_students/normal/election/vote");
 const {
   getStudents,
   getStudentsExceptSeeker,
@@ -128,4 +134,9 @@ exports.clearDues = clearDues;
 exports.createElection = electionCreation;
 exports.getCurrentElection = checkCurrentElection;
 exports.getNewElecoDetails = verifyStudentMat;
+exports.candidateApply = candidateApply;
+exports.appplicationCheck = appplicationCheck;
+exports.candidateApproval = approveCandidate;
+exports.electionResults = electionResults;
+exports.vote = voteForCandidate;
 /* Election services ends */

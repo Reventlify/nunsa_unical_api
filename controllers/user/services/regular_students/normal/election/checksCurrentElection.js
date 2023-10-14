@@ -17,7 +17,7 @@ exports.checkCurrentElection = async (req, res) => {
     ON e.sch_session_id = s.sch_session_id
     LEFT JOIN students u
     ON e.eleco = u.student_id
-    WHERE e.election_status = 'pending'
+    WHERE e.election_status = 'pending' or e.election_status = 'started' or e.election_status = 'concluded'
     GROUP BY
     e.election_id,
     s.sch_session,

@@ -1,4 +1,5 @@
 const pool = require("../db");
+const _ = require("lodash");
 const {
   postCommentsID,
   postLikesID,
@@ -17,6 +18,34 @@ exports.neat = function (yourName) {
   return newName;
 };
 
+exports.startWithCase = (params) => {
+  if (params === null || params.length === 0) {
+    return null;
+  } else {
+    const returner = (whatName, index) => {
+      if (index === 0) {
+        return _.capitalize(whatName);
+      } else {
+        return " " + _.capitalize(whatName);
+      }
+    };
+
+    const nameHandler = (n) => {
+      let handleName = "";
+      if (n.length === 0) {
+        return;
+      } else {
+        const name = _.words(n, /[^, ]+/g);
+        name.map((user, i) => {
+          return (handleName = handleName + returner(user, i));
+        });
+        return handleName;
+      }
+    };
+
+    return nameHandler(params);
+  }
+};
 exports.levelHandler = (level) => {
   let refinedLevel;
   if (typeof level === "string") {
@@ -354,4 +383,34 @@ exports.getTimeStamp = (date) => {
 exports.currentTimestamp = () => {
   const currentTimestamp = Date.now();
   return currentTimestamp;
+};
+
+exports.getElectionResults = async (cathegory, election, voter) => {
+  try {
+    const query = `
+    SELECT
+    candidates.candidate_id,
+    candidates.candidate_role,
+    CONCAT(students.student_fname, ' ', students.student_lname) AS candidate_name,
+    COUNT(votes.voter_id) AS votes,
+    CASE WHEN COUNT(CASE WHEN votes.voter_id = $3 THEN 1 END) > 0 THEN 'yes' ELSE 'no' END AS voted_for
+  FROM
+    candidates
+  LEFT JOIN
+    votes ON candidates.candidate_id = votes.candidate_id
+  LEFT JOIN
+    students ON candidates.candidate_id = students.student_id
+  WHERE
+    candidates.candidate_role = $1 AND candidates.candidate_status = 'approved'
+    AND votes.election_id = $2
+  GROUP BY
+    candidates.candidate_id, candidates.candidate_role, candidate_name;
+  
+      `;
+
+    const result = await pool.query(query, [cathegory, election, voter]);
+    return result.rows;
+  } catch (error) {
+    return console.log(`getElectionResults error: ${error}`);
+  }
 };

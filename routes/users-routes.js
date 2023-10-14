@@ -106,6 +106,11 @@ router.post(
 router.post("/exco/create_election", authenticateToken, user.createElection);
 router.get("/get_election", authenticateToken, user.getCurrentElection);
 router.get("/verify_eleco/:eleco", authenticateToken, user.getNewElecoDetails);
+router.post("/candidate_apply", authenticateToken, user.candidateApply);
+router.get("/candidate_check", authenticateToken, user.appplicationCheck);
+router.patch("/candidate_approve", authenticateToken, user.candidateApproval);
+router.get("/election_results", authenticateToken, user.electionResults);
+router.get("/vote", authenticateToken, user.vote);
 /* Election APIs ends */
 
 module.exports = router;

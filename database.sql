@@ -483,3 +483,55 @@ $$ LANGUAGE plpgsql;
 SELECT * FROM GetStudentById('3047886569');
 
 DROP FUNCTION IF EXISTS GetStudentById(TEXT);
+
+-- election results
+SELECT
+  candidates.candidate_id,
+  candidates.candidate_role,
+  students.student_fname,
+  students.student_lname,
+  COUNT(votes.voter_id) AS vote_count
+FROM
+  candidates
+LEFT JOIN
+  votes ON candidates.candidate_id = votes.candidate_id
+LEFT JOIN
+  students ON candidates.candidate_id = students.student_id
+WHERE
+  candidates.candidate_role = 'president'
+  AND votes.election_id = 'your_election_id'
+GROUP BY
+  candidates.candidate_id, candidates.candidate_role, students.student_fname, students.student_lname;
+
+-- total election results
+SELECT
+  candidate_roles.role_name,
+  COUNT(votes.voter_id) AS vote_count
+FROM (
+  SELECT 'president' AS role_name
+  UNION SELECT 'vice president'
+  UNION SELECT 'financial secretary'
+  UNION SELECT 'general secretary'
+  UNION SELECT 'treasurer'
+  UNION SELECT 'director of welfare'
+  UNION SELECT 'director of socials'
+  UNION SELECT 'director of sports'
+  UNION SELECT 'director of health'
+  UNION SELECT 'director of information'
+) AS candidate_roles
+LEFT JOIN candidates ON candidate_roles.role_name = candidates.candidate_role
+LEFT JOIN votes ON candidates.candidate_id = votes.candidate_id
+GROUP BY candidate_roles.role_name
+ORDER BY
+  CASE
+    WHEN candidate_roles.role_name = 'president' THEN 1
+    WHEN candidate_roles.role_name = 'vice president' THEN 2
+    WHEN candidate_roles.role_name = 'financial secretary' THEN 3
+    WHEN candidate_roles.role_name = 'general secretary' THEN 4
+    WHEN candidate_roles.role_name = 'treasurer' THEN 5
+    WHEN candidate_roles.role_name = 'director of welfare' THEN 6
+    WHEN candidate_roles.role_name = 'director of socials' THEN 7
+    WHEN candidate_roles.role_name = 'director of sports' THEN 8
+    WHEN candidate_roles.role_name = 'director of health' THEN 9
+    WHEN candidate_roles.role_name = 'director of information' THEN 10
+  END;
