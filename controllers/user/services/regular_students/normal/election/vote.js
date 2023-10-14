@@ -24,9 +24,7 @@ exports.voteForCandidate = async (req, res) => {
     );
 
     if (electionQuery1.rows.length === 0) {
-      return res
-        .status(400)
-        .json("election has not started come back later.");
+      return res.status(400).json("election has not started come back later.");
     }
 
     const electionId = electionQuery1.rows[0].election_id;
@@ -52,6 +50,25 @@ exports.voteForCandidate = async (req, res) => {
         .json("You need to pay at least one due before voting.");
     }
 
+    const votedBefore = await pool.query(
+      `
+    SELECT
+    COUNT(*) AS count_of_votes
+FROM
+    students s
+INNER JOIN
+    votes v ON s.student_id = v.voter_id
+INNER JOIN
+    candidates c ON v.candidate_id = c.candidate_id
+
+    Where c.candidate_role = $2 and s.student_id = $1;
+    `,
+      [voterId, candidateQuery.rows[0].candidate_role]
+    );
+
+    if (votedBefore.rows.length > 0) {
+      return res.status(400).json("You cant vote again");
+    }
     // Cast the vote
     const voteQuery = await pool.query(
       "INSERT INTO votes (election_id, candidate_id, voter_id, votedat) VALUES ($1, $2, $3, $4)",

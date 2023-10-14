@@ -573,3 +573,15 @@ WHERE
     AND votes.election_id = 'AvQPeTMOlG'
 GROUP BY
     candidates.candidate_id, candidates.candidate_role, CONCAT(students.student_fname, ' ', students.student_lname), candidates.candidate_status;
+
+
+SELECT
+    COUNT(*) AS count_of_votes
+FROM
+    students s
+INNER JOIN
+    votes v ON s.student_id = v.voter_id
+INNER JOIN
+    candidates c ON v.candidate_id = c.candidate_id
+
+    Where c.candidate_role = 'vice president' and s.student_id = '3301920602';
