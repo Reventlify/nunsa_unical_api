@@ -66,7 +66,7 @@ INNER JOIN
       [voterId, candidateQuery.rows[0].candidate_role]
     );
 
-    if (votedBefore.rows.length > 0) {
+    if (votedBefore.rows.length === 1) {
       return res.status(400).json("You can't vote in this cathegory again");
     }
     // Cast the vote
